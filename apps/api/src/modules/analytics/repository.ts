@@ -219,3 +219,10 @@ export function findStudentStageTransitions(studentId: string) {
     select: { toStage: true, timestamp: true },
   })
 }
+
+export function findAllStageTransitions() {
+  return prisma.stageTransition.findMany({
+    orderBy: [{ studentId: 'asc' }, { timestamp: 'asc' }],
+    select: { studentId: true, toStage: true, timestamp: true },
+  })
+}

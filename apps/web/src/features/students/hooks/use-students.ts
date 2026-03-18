@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
 import type {
   StudentListItem,
@@ -7,6 +7,11 @@ import type {
   StudentStage,
   VisaRisk,
   AnalyticsOverview,
+  AiAssessmentSummary,
+  TimelineItem,
+  NoteItem,
+  ActivityLogItem,
+  ContactItem,
 } from '@sturec/shared'
 import api from '@/lib/api/client'
 import { fetchTeamMembers, buildNameMap, resolveName } from '@/features/team/lib/team-cache'
@@ -102,5 +107,104 @@ export function useStudentStats() {
     queryKey: ['analytics', 'overview', {}],
     queryFn: () => api.get('/analytics/overview') as unknown as AnalyticsOverview,
     select: (overview) => overview.data.students,
+  })
+}
+
+// ─── AI Assessments hook ──────────────────────────────────────────
+
+export function useStudentAssessments(studentId: string) {
+  return useQuery({
+    queryKey: ['students', studentId, 'ai-assessments'],
+    queryFn: () =>
+      api.get(`/students/${studentId}/ai-assessments`) as unknown as AiAssessmentSummary[],
+    enabled: !!studentId,
+  })
+}
+
+// ─── Timeline hook ────────────────────────────────────────────────
+
+export function useStudentTimeline(studentId: string) {
+  return useQuery({
+    queryKey: ['students', studentId, 'timeline'],
+    queryFn: () =>
+      api.get(`/students/${studentId}/timeline`) as unknown as TimelineItem[],
+    enabled: !!studentId,
+  })
+}
+
+// ─── Notes hook ───────────────────────────────────────────────────
+
+export function useStudentNotes(studentId: string, page = 1) {
+  return useQuery({
+    queryKey: ['students', studentId, 'notes', { page }],
+    queryFn: () =>
+      api.get(`/students/${studentId}/notes`, { params: { page, limit: 20 } }) as unknown as PaginatedResponse<NoteItem>,
+    enabled: !!studentId,
+  })
+}
+
+export function useCreateNote(studentId: string) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (data: { noteType: string; content: string }) =>
+      api.post(`/students/${studentId}/notes`, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['students', studentId, 'notes'] })
+    },
+  })
+}
+
+// ─── Activities hook ──────────────────────────────────────────────
+
+export function useStudentActivities(studentId: string, page = 1) {
+  return useQuery({
+    queryKey: ['students', studentId, 'activities', { page }],
+    queryFn: () =>
+      api.get(`/students/${studentId}/activities`, { params: { page, limit: 20 } }) as unknown as PaginatedResponse<ActivityLogItem>,
+    enabled: !!studentId,
+  })
+}
+
+export function useCreateActivity(studentId: string) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (data: {
+      activityType: string
+      channel: string
+      direction: string
+      outcome?: string
+      summary?: string
+    }) => api.post(`/students/${studentId}/activities`, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['students', studentId, 'activities'] })
+    },
+  })
+}
+
+// ─── Contacts hook ────────────────────────────────────────────────
+
+export function useStudentContacts(studentId: string) {
+  return useQuery({
+    queryKey: ['students', studentId, 'contacts'],
+    queryFn: () =>
+      api.get(`/students/${studentId}/contacts`) as unknown as ContactItem[],
+    enabled: !!studentId,
+  })
+}
+
+export function useCreateContact(studentId: string) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (data: {
+      contactType: string
+      name: string
+      relation: string
+      phone?: string
+      email?: string
+      isPrimary?: boolean
+    }) => api.post(`/students/${studentId}/contacts`, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['students', studentId, 'contacts'] })
+    },
   })
 }

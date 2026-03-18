@@ -208,7 +208,7 @@ async function sendWhatsApp(
 }
 
 /**
- * SMS dispatch. Placeholder — same provider as WhatsApp likely.
+ * SMS dispatch via Sensy.ai (same provider as WhatsApp).
  */
 async function sendSms(
   to: string,
@@ -216,7 +216,30 @@ async function sendSms(
   data: Record<string, unknown>,
   _user: { firstName: string; lastName: string },
 ): Promise<void> {
-  console.warn(`[notifications] SMS not yet implemented, skipping to ${to} (${templateKey})`)
+  const apiKey = process.env.SMS_API_KEY || process.env.WHATSAPP_API_KEY
+  const apiUrl = process.env.SMS_API_URL || process.env.WHATSAPP_API_URL
+  if (!apiKey || !apiUrl) {
+    console.warn(`[notifications] SMS API not configured, skipping message to ${to}`)
+    return
+  }
+
+  const response = await fetch(`${apiUrl}/sms`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      to,
+      template: templateKey,
+      data,
+    }),
+  })
+
+  if (!response.ok) {
+    const body = await response.text()
+    throw new Error(`SMS API error ${response.status}: ${body}`)
+  }
 }
 
 // ─── Recipient resolution ─────────────────────────────────

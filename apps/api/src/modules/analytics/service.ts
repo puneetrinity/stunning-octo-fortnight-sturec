@@ -116,6 +116,51 @@ const STAGE_ORDER = [
   'alumni',
 ]
 
+async function computeAverageDaysInStage(): Promise<Record<string, number>> {
+  const transitions = await repo.findAllStageTransitions() ?? []
+
+  // Group transitions by studentId
+  const byStudent = new Map<string, Array<{ toStage: string; timestamp: Date }>>()
+  for (const t of transitions) {
+    let list = byStudent.get(t.studentId)
+    if (!list) {
+      list = []
+      byStudent.set(t.studentId, list)
+    }
+    list.push(t)
+  }
+
+  // For each student, calculate days between consecutive transitions
+  const stageDurations = new Map<string, number[]>()
+  for (const studentTransitions of byStudent.values()) {
+    for (let i = 0; i < studentTransitions.length; i++) {
+      const nextTimestamp = studentTransitions[i + 1]?.timestamp ?? new Date()
+      const days = Math.floor(
+        (nextTimestamp.getTime() - studentTransitions[i].timestamp.getTime()) / (1000 * 60 * 60 * 24),
+      )
+      const stage = studentTransitions[i].toStage
+      let durations = stageDurations.get(stage)
+      if (!durations) {
+        durations = []
+        stageDurations.set(stage, durations)
+      }
+      durations.push(days)
+    }
+  }
+
+  // Compute average for each stage
+  const result: Record<string, number> = {}
+  for (const stage of STAGE_ORDER) {
+    const durations = stageDurations.get(stage)
+    if (durations && durations.length > 0) {
+      const avg = durations.reduce((sum, d) => sum + d, 0) / durations.length
+      result[stage] = Math.round(avg * 100) / 100
+    }
+  }
+
+  return result
+}
+
 export async function getPipeline(from?: string, to?: string): Promise<PipelineMetrics> {
   const period = defaultPeriod(from, to)
 
@@ -139,7 +184,7 @@ export async function getPipeline(from?: string, to?: string): Promise<PipelineM
     data: {
       funnel,
       conversionRate,
-      averageDaysInStage: {}, // TODO: compute from stage_transitions when historical data exists
+      averageDaysInStage: await computeAverageDaysInStage()
     },
   }
 }

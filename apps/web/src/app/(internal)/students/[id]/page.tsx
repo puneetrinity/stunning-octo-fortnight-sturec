@@ -1,21 +1,37 @@
 'use client'
 
-import { use } from 'react'
+import { use, useState } from 'react'
 import Link from 'next/link'
 
-import type { ApplicationListItem, DocumentListItem, DocumentRequirementItem } from '@sturec/shared'
+import type {
+  ApplicationListItem,
+  DocumentListItem,
+  DocumentRequirementItem,
+} from '@sturec/shared'
 import { STAGE_DISPLAY_NAMES, STAGE_ORDER } from '@sturec/shared'
 import { PageHeader } from '@/components/layout/page-header'
 import { Card, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Select } from '@/components/ui/select'
 import { Tabs } from '@/components/ui/tabs'
 import { Table, type Column } from '@/components/ui/table'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { EmptyState } from '@/components/ui/empty-state'
 import { StageBadge } from '@/components/shared/stage-badge'
 import { ScoreBar } from '@/components/shared/score-bar'
-import { useStudent } from '@/features/students/hooks/use-students'
+import {
+  useStudent,
+  useStudentAssessments,
+  useStudentTimeline,
+  useStudentNotes,
+  useCreateNote,
+  useStudentActivities,
+  useCreateActivity,
+  useStudentContacts,
+  useCreateContact,
+} from '@/features/students/hooks/use-students'
 import { useStudentApplications } from '@/features/applications/hooks/use-applications'
 import { useStudentDocuments, useStudentRequirements, useVerifyDocument, useRejectDocument } from '@/features/documents/hooks/use-documents'
 
@@ -125,27 +141,27 @@ export default function StudentDetailPage({ params }: { params: Promise<{ id: st
           {
             id: 'ai',
             label: 'AI Assessments',
-            content: <PlaceholderTab title="AI Assessments" description="Assessment history with component scores and gap analysis." />,
+            content: <AiAssessmentsTab studentId={id} />,
           },
           {
             id: 'timeline',
             label: 'Timeline',
-            content: <PlaceholderTab title="Timeline" description="Unified chronological view of all events." />,
+            content: <TimelineTab studentId={id} />,
           },
           {
             id: 'notes',
             label: 'Notes',
-            content: <PlaceholderTab title="Notes" description="Counsellor notes with type tags." />,
+            content: <NotesTab studentId={id} />,
           },
           {
             id: 'contacts',
             label: 'Contacts',
-            content: <PlaceholderTab title="Contacts" description="Parent/guardian contact management." />,
+            content: <ContactsTab studentId={id} />,
           },
           {
             id: 'activity',
             label: 'Activity',
-            content: <PlaceholderTab title="Activity Log" description="Counsellor activity tracking." />,
+            content: <ActivityTab studentId={id} />,
           },
         ]}
       />
@@ -478,21 +494,623 @@ function DocumentsTab({ studentId }: { studentId: string }) {
   )
 }
 
-// ─── Placeholder Tab ─────────────────────────────────────────────
+// ─── AI Assessments Tab ──────────────────────────────────────────
 
-function PlaceholderTab({ title, description }: { title: string; description: string }) {
+function AiAssessmentsTab({ studentId }: { studentId: string }) {
+  const { data: assessments, isLoading } = useStudentAssessments(studentId)
+
+  if (isLoading) return <div className="flex justify-center py-12"><LoadingSpinner /></div>
+
+  if (!assessments?.length) {
+    return (
+      <EmptyState
+        title="No AI assessments"
+        description="No AI assessments have been generated for this student yet."
+      />
+    )
+  }
+
+  return (
+    <div className="space-y-4">
+      {assessments.map((a) => (
+        <Card key={a.id}>
+          <CardHeader>
+            <div className="flex items-center gap-2">
+              <CardTitle>Assessment</CardTitle>
+              <Badge variant="muted">{a.sourceType}</Badge>
+            </div>
+            <span className="text-xs text-text-muted font-mono">{formatDate(a.createdAt)}</span>
+          </CardHeader>
+
+          {/* Summary */}
+          <p className="text-sm text-text-secondary mb-4">{a.summaryForTeam}</p>
+
+          {/* Top-level scores */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+            <div className="space-y-1">
+              <span className="text-xs text-text-muted">Overall Readiness</span>
+              <ScoreBar label="" value={a.overallReadinessScore} max={100} />
+            </div>
+            <div className="space-y-1">
+              <span className="text-xs text-text-muted">Qualification</span>
+              <ScoreBar label="" value={a.qualificationScore} max={100} />
+            </div>
+            <div className="space-y-1">
+              <span className="text-xs text-text-muted">Profile Completeness</span>
+              <ScoreBar label="" value={a.profileCompleteness} max={100} />
+            </div>
+          </div>
+
+          {/* Component scores */}
+          <div className="border-t border-border pt-4">
+            <p className="text-xs font-medium text-text-secondary mb-3">Component Scores</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <ScoreBar label="Academic Fit" value={a.academicFitScore} max={100} />
+              <ScoreBar label="Financial Readiness" value={a.financialReadinessScore} max={100} />
+              <ScoreBar label="Language Readiness" value={a.languageReadinessScore} max={100} />
+              <ScoreBar label="Motivation Clarity" value={a.motivationClarityScore} max={100} />
+              <ScoreBar label="Timeline Urgency" value={a.timelineUrgencyScore} max={100} />
+              <ScoreBar label="Document Readiness" value={a.documentReadinessScore} max={100} />
+              <ScoreBar label="Visa Complexity" value={a.visaComplexityScore} max={100} />
+            </div>
+          </div>
+
+          {/* Extra metadata */}
+          <div className="border-t border-border pt-3 mt-4 flex items-center gap-4">
+            {a.visaRisk && (
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs text-text-muted">Visa Risk:</span>
+                <Badge
+                  variant={
+                    a.visaRisk === 'low' ? 'success' :
+                    a.visaRisk === 'medium' ? 'warning' :
+                    a.visaRisk === 'high' ? 'danger' : 'muted'
+                  }
+                  dot
+                >
+                  {a.visaRisk}
+                </Badge>
+              </div>
+            )}
+            {a.priorityLevel && (
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs text-text-muted">Priority:</span>
+                <Badge variant="muted">{a.priorityLevel}</Badge>
+              </div>
+            )}
+            {a.recommendedDisposition && (
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs text-text-muted">Disposition:</span>
+                <span className="text-xs text-text-secondary">{a.recommendedDisposition}</span>
+              </div>
+            )}
+          </div>
+        </Card>
+      ))}
+    </div>
+  )
+}
+
+// ─── Timeline Tab ────────────────────────────────────────────────
+
+function TimelineTab({ studentId }: { studentId: string }) {
+  const { data: timeline, isLoading } = useStudentTimeline(studentId)
+
+  if (isLoading) return <div className="flex justify-center py-12"><LoadingSpinner /></div>
+
+  if (!timeline?.length) {
+    return (
+      <EmptyState
+        title="No stage transitions"
+        description="This student has no recorded stage transitions yet."
+      />
+    )
+  }
+
   return (
     <Card>
-      <div className="flex flex-col items-center justify-center py-12 text-center">
-        <div className="w-12 h-12 rounded-full bg-surface-sunken flex items-center justify-center mb-3">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="text-text-muted">
-            <rect x="2" y="2" width="16" height="16" rx="3" stroke="currentColor" strokeWidth="1.5" strokeDasharray="3 3" />
-          </svg>
+      <CardHeader>
+        <CardTitle>Stage Transitions</CardTitle>
+      </CardHeader>
+      <div className="relative">
+        {/* Vertical line */}
+        <div className="absolute left-4 top-0 bottom-0 w-px bg-border" />
+
+        <div className="space-y-0">
+          {timeline.map((t, idx) => (
+            <div key={t.id} className="relative flex items-start gap-4 pl-10 py-3">
+              {/* Dot on the timeline */}
+              <div
+                className={`absolute left-[11px] top-4 w-2.5 h-2.5 rounded-full border-2 border-white ${
+                  idx === 0 ? 'bg-primary-600' : 'bg-gray-300'
+                }`}
+              />
+
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  {t.fromStage ? (
+                    <>
+                      <StageBadge stage={t.fromStage} />
+                      <span className="text-xs text-text-muted">&rarr;</span>
+                    </>
+                  ) : null}
+                  <StageBadge stage={t.toStage} />
+                  <Badge variant="muted">{t.changedByType}</Badge>
+                </div>
+
+                {t.reasonNote && (
+                  <p className="text-xs text-text-secondary mt-1">{t.reasonNote}</p>
+                )}
+                {t.reasonCode && !t.reasonNote && (
+                  <p className="text-xs text-text-muted mt-1">{t.reasonCode}</p>
+                )}
+
+                <p className="text-[11px] text-text-muted mt-1 font-mono">
+                  {formatDate(t.createdAt)}
+                </p>
+              </div>
+            </div>
+          ))}
         </div>
-        <h3 className="text-sm font-semibold text-text-primary font-display">{title}</h3>
-        <p className="text-xs text-text-muted mt-1 max-w-xs">{description}</p>
       </div>
     </Card>
+  )
+}
+
+// ─── Notes Tab ───────────────────────────────────────────────────
+
+function NotesTab({ studentId }: { studentId: string }) {
+  const [page, setPage] = useState(1)
+  const [content, setContent] = useState('')
+  const [noteType, setNoteType] = useState('general')
+  const { data, isLoading } = useStudentNotes(studentId, page)
+  const createNote = useCreateNote(studentId)
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!content.trim()) return
+    createNote.mutate(
+      { noteType, content: content.trim() },
+      { onSuccess: () => { setContent(''); setPage(1) } },
+    )
+  }
+
+  return (
+    <div className="space-y-4">
+      {/* Create note form */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Add Note</CardTitle>
+        </CardHeader>
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <div className="flex gap-3">
+            <div className="w-40">
+              <Select
+                label="Type"
+                value={noteType}
+                onChange={(e) => setNoteType(e.target.value)}
+                options={[
+                  { value: 'general', label: 'General' },
+                  { value: 'counsellor', label: 'Counsellor' },
+                  { value: 'academic', label: 'Academic' },
+                  { value: 'financial', label: 'Financial' },
+                  { value: 'visa', label: 'Visa' },
+                  { value: 'follow_up', label: 'Follow-up' },
+                ]}
+              />
+            </div>
+            <div className="flex-1">
+              <Input
+                label="Content"
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                placeholder="Write a note..."
+              />
+            </div>
+          </div>
+          <div className="flex justify-end">
+            <Button type="submit" size="sm" loading={createNote.isPending} disabled={!content.trim()}>
+              Add Note
+            </Button>
+          </div>
+        </form>
+      </Card>
+
+      {/* Notes list */}
+      {isLoading ? (
+        <div className="flex justify-center py-12"><LoadingSpinner /></div>
+      ) : !data?.items.length ? (
+        <EmptyState
+          title="No notes"
+          description="No notes have been added for this student yet."
+        />
+      ) : (
+        <div className="space-y-3">
+          {data.items.map((n) => (
+            <Card key={n.id}>
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Badge variant="muted">{n.noteType}</Badge>
+                    <span className="text-xs text-text-muted">by {n.createdByName}</span>
+                  </div>
+                  <p className="text-sm text-text-primary whitespace-pre-wrap">{n.content}</p>
+                </div>
+                <span className="text-[11px] text-text-muted font-mono shrink-0">
+                  {formatDate(n.createdAt)}
+                </span>
+              </div>
+            </Card>
+          ))}
+
+          {/* Pagination */}
+          {data.total > data.limit && (
+            <div className="flex items-center justify-between pt-2">
+              <span className="text-xs text-text-muted">
+                Page {data.page} of {Math.ceil(data.total / data.limit)}
+              </span>
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  disabled={page <= 1}
+                  onClick={() => setPage((p) => p - 1)}
+                >
+                  Previous
+                </Button>
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  disabled={page >= Math.ceil(data.total / data.limit)}
+                  onClick={() => setPage((p) => p + 1)}
+                >
+                  Next
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ─── Contacts Tab ────────────────────────────────────────────────
+
+function ContactsTab({ studentId }: { studentId: string }) {
+  const { data: contacts, isLoading } = useStudentContacts(studentId)
+  const createContact = useCreateContact(studentId)
+  const [showForm, setShowForm] = useState(false)
+  const [form, setForm] = useState({
+    contactType: 'parent' as string,
+    name: '',
+    relation: '',
+    phone: '',
+    email: '',
+    isPrimary: false,
+  })
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!form.name.trim() || !form.relation.trim()) return
+    createContact.mutate(
+      {
+        contactType: form.contactType,
+        name: form.name.trim(),
+        relation: form.relation.trim(),
+        phone: form.phone.trim() || undefined,
+        email: form.email.trim() || undefined,
+        isPrimary: form.isPrimary,
+      },
+      {
+        onSuccess: () => {
+          setForm({ contactType: 'parent', name: '', relation: '', phone: '', email: '', isPrimary: false })
+          setShowForm(false)
+        },
+      },
+    )
+  }
+
+  return (
+    <div className="space-y-4">
+      {/* Header with add button */}
+      <div className="flex justify-end">
+        <Button size="sm" variant="secondary" onClick={() => setShowForm(!showForm)}>
+          {showForm ? 'Cancel' : 'Add Contact'}
+        </Button>
+      </div>
+
+      {/* Create contact form */}
+      {showForm && (
+        <Card>
+          <CardHeader>
+            <CardTitle>New Contact</CardTitle>
+          </CardHeader>
+          <form onSubmit={handleSubmit} className="space-y-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <Select
+                label="Type"
+                value={form.contactType}
+                onChange={(e) => setForm({ ...form, contactType: e.target.value })}
+                options={[
+                  { value: 'parent', label: 'Parent' },
+                  { value: 'guardian', label: 'Guardian' },
+                  { value: 'emergency', label: 'Emergency' },
+                ]}
+              />
+              <Input
+                label="Name"
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                placeholder="Full name"
+              />
+              <Input
+                label="Relation"
+                value={form.relation}
+                onChange={(e) => setForm({ ...form, relation: e.target.value })}
+                placeholder="e.g. Mother, Father, Uncle"
+              />
+              <Input
+                label="Phone"
+                value={form.phone}
+                onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                placeholder="+33..."
+              />
+              <Input
+                label="Email"
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                placeholder="email@example.com"
+              />
+              <div className="flex items-end pb-1">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={form.isPrimary}
+                    onChange={(e) => setForm({ ...form, isPrimary: e.target.checked })}
+                    className="rounded border-border"
+                  />
+                  <span className="text-xs text-text-secondary">Primary contact</span>
+                </label>
+              </div>
+            </div>
+            <div className="flex justify-end">
+              <Button type="submit" size="sm" loading={createContact.isPending} disabled={!form.name.trim() || !form.relation.trim()}>
+                Save Contact
+              </Button>
+            </div>
+          </form>
+        </Card>
+      )}
+
+      {/* Contacts list */}
+      {isLoading ? (
+        <div className="flex justify-center py-12"><LoadingSpinner /></div>
+      ) : !contacts?.length ? (
+        <EmptyState
+          title="No contacts"
+          description="No contacts have been added for this student yet."
+        />
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {contacts.map((c) => (
+            <Card key={c.id}>
+              <div className="flex items-start justify-between">
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <p className="text-sm font-medium text-text-primary">{c.name}</p>
+                    {c.isPrimary && <Badge variant="success">Primary</Badge>}
+                  </div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <Badge variant="muted">{c.contactType}</Badge>
+                    <span className="text-xs text-text-muted">{c.relation}</span>
+                  </div>
+                  {c.phone && (
+                    <p className="text-xs text-text-secondary">{c.phone}</p>
+                  )}
+                  {c.email && (
+                    <p className="text-xs text-text-secondary">{c.email}</p>
+                  )}
+                </div>
+                <span className="text-[11px] text-text-muted font-mono shrink-0">
+                  {formatDate(c.createdAt)}
+                </span>
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ─── Activity Tab ────────────────────────────────────────────────
+
+function ActivityTab({ studentId }: { studentId: string }) {
+  const [page, setPage] = useState(1)
+  const [showForm, setShowForm] = useState(false)
+  const { data, isLoading } = useStudentActivities(studentId, page)
+  const createActivity = useCreateActivity(studentId)
+  const [form, setForm] = useState({
+    activityType: 'call' as string,
+    channel: 'phone' as string,
+    direction: 'outbound' as string,
+    outcome: '',
+    summary: '',
+  })
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    createActivity.mutate(
+      {
+        activityType: form.activityType,
+        channel: form.channel,
+        direction: form.direction,
+        outcome: form.outcome.trim() || undefined,
+        summary: form.summary.trim() || undefined,
+      },
+      {
+        onSuccess: () => {
+          setForm({ activityType: 'call', channel: 'phone', direction: 'outbound', outcome: '', summary: '' })
+          setShowForm(false)
+          setPage(1)
+        },
+      },
+    )
+  }
+
+  const activityTypeOptions = [
+    { value: 'call', label: 'Call' },
+    { value: 'whatsapp', label: 'WhatsApp' },
+    { value: 'email', label: 'Email' },
+    { value: 'meeting', label: 'Meeting' },
+    { value: 'follow_up', label: 'Follow-up' },
+    { value: 'status_update', label: 'Status Update' },
+    { value: 'other', label: 'Other' },
+  ]
+
+  const channelOptions = [
+    { value: 'phone', label: 'Phone' },
+    { value: 'whatsapp', label: 'WhatsApp' },
+    { value: 'email', label: 'Email' },
+    { value: 'video', label: 'Video' },
+    { value: 'in_person', label: 'In Person' },
+    { value: 'internal', label: 'Internal' },
+    { value: 'other', label: 'Other' },
+  ]
+
+  const directionOptions = [
+    { value: 'outbound', label: 'Outbound' },
+    { value: 'inbound', label: 'Inbound' },
+    { value: 'internal', label: 'Internal' },
+  ]
+
+  return (
+    <div className="space-y-4">
+      {/* Header with add button */}
+      <div className="flex justify-end">
+        <Button size="sm" variant="secondary" onClick={() => setShowForm(!showForm)}>
+          {showForm ? 'Cancel' : 'Log Activity'}
+        </Button>
+      </div>
+
+      {/* Create activity form */}
+      {showForm && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Log Activity</CardTitle>
+          </CardHeader>
+          <form onSubmit={handleSubmit} className="space-y-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <Select
+                label="Type"
+                value={form.activityType}
+                onChange={(e) => setForm({ ...form, activityType: e.target.value })}
+                options={activityTypeOptions}
+              />
+              <Select
+                label="Channel"
+                value={form.channel}
+                onChange={(e) => setForm({ ...form, channel: e.target.value })}
+                options={channelOptions}
+              />
+              <Select
+                label="Direction"
+                value={form.direction}
+                onChange={(e) => setForm({ ...form, direction: e.target.value })}
+                options={directionOptions}
+              />
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <Input
+                label="Outcome"
+                value={form.outcome}
+                onChange={(e) => setForm({ ...form, outcome: e.target.value })}
+                placeholder="e.g. Scheduled follow-up, Left voicemail"
+              />
+              <Input
+                label="Summary"
+                value={form.summary}
+                onChange={(e) => setForm({ ...form, summary: e.target.value })}
+                placeholder="Brief summary of the interaction"
+              />
+            </div>
+            <div className="flex justify-end">
+              <Button type="submit" size="sm" loading={createActivity.isPending}>
+                Log Activity
+              </Button>
+            </div>
+          </form>
+        </Card>
+      )}
+
+      {/* Activities list */}
+      {isLoading ? (
+        <div className="flex justify-center py-12"><LoadingSpinner /></div>
+      ) : !data?.items.length ? (
+        <EmptyState
+          title="No activities"
+          description="No activities have been logged for this student yet."
+        />
+      ) : (
+        <div className="space-y-3">
+          {data.items.map((a) => (
+            <Card key={a.id}>
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap mb-1">
+                    <Badge variant="info">{a.activityType.replace(/_/g, ' ')}</Badge>
+                    <Badge variant="muted">{a.channel.replace(/_/g, ' ')}</Badge>
+                    <Badge
+                      variant={a.direction === 'outbound' ? 'success' : a.direction === 'inbound' ? 'warning' : 'muted'}
+                    >
+                      {a.direction}
+                    </Badge>
+                  </div>
+                  {a.summary && (
+                    <p className="text-sm text-text-primary mt-1">{a.summary}</p>
+                  )}
+                  {a.outcome && (
+                    <p className="text-xs text-text-secondary mt-1">Outcome: {a.outcome}</p>
+                  )}
+                  <p className="text-[11px] text-text-muted mt-1">by {a.createdBy.name}</p>
+                </div>
+                <span className="text-[11px] text-text-muted font-mono shrink-0">
+                  {formatDate(a.createdAt)}
+                </span>
+              </div>
+            </Card>
+          ))}
+
+          {/* Pagination */}
+          {data.total > data.limit && (
+            <div className="flex items-center justify-between pt-2">
+              <span className="text-xs text-text-muted">
+                Page {data.page} of {Math.ceil(data.total / data.limit)}
+              </span>
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  disabled={page <= 1}
+                  onClick={() => setPage((p) => p - 1)}
+                >
+                  Previous
+                </Button>
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  disabled={page >= Math.ceil(data.total / data.limit)}
+                  onClick={() => setPage((p) => p + 1)}
+                >
+                  Next
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
   )
 }
 
