@@ -1,0 +1,4 @@
+{
+  "build": "npm run build --workspace=@sturec/shared && npm run build",
+  "start": "npm run start"
+}
