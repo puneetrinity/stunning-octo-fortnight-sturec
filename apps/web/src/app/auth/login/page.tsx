@@ -31,9 +31,7 @@ export default function LoginPage() {
   // Surface auth provider errors (e.g. Firebase user with no backend account)
   useEffect(() => {
     if (authError === 'USER_NOT_FOUND') {
-      setError(
-        'No account found. If you are an internal team member, ask your admin to send you an invitation. If you are a student, please register first.'
-      )
+      setError('NO_ACCOUNT')
     } else if (authError === 'VERIFY_FAILED') {
       setError('Unable to verify your account. Please try again or contact support.')
     }
@@ -93,7 +91,24 @@ export default function LoginPage() {
 
           {error && (
             <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-sm text-red-700">
-              <p>{error}</p>
+              {error === 'NO_ACCOUNT' ? (
+                <>
+                  <p>No account found for this email.</p>
+                  <ul className="mt-2 space-y-1 text-xs">
+                    <li>
+                      Student?{' '}
+                      <a href="/auth/register" className="font-medium underline hover:no-underline">
+                        Create a student account
+                      </a>
+                    </li>
+                    <li>
+                      Team member? Ask your admin for an invitation link.
+                    </li>
+                  </ul>
+                </>
+              ) : (
+                <p>{error}</p>
+              )}
               {authError && (
                 <button
                   type="button"
@@ -161,7 +176,17 @@ export default function LoginPage() {
         </div>
 
         <p className="text-xs text-text-muted text-center mt-6">
-          Student? Sign in above to access your portal.
+          New student?{' '}
+          <a href="/auth/register" className="text-primary-600 hover:underline">
+            Create an account
+          </a>
+        </p>
+
+        <p className="text-xs text-text-muted text-center mt-2">
+          Internal team member?{' '}
+          <span className="text-text-secondary">
+            Ask your admin for an invitation link.
+          </span>
         </p>
       </div>
     </div>
