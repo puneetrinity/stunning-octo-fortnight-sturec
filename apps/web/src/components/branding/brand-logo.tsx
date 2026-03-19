@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 
 type BrandVariant = 'inline' | 'compact' | 'stacked' | 'mark'
 
@@ -15,52 +16,14 @@ interface BrandLogoProps {
 
 function BrandMark({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 128 128" className={className} aria-hidden="true">
-      <defs>
-        <linearGradient id="brand-blue" x1="0%" x2="100%">
-          <stop offset="0%" stopColor="#0a4a8f" />
-          <stop offset="100%" stopColor="#1f5fb5" />
-        </linearGradient>
-        <linearGradient id="brand-red" x1="0%" x2="100%">
-          <stop offset="0%" stopColor="#c93833" />
-          <stop offset="100%" stopColor="#e4504a" />
-        </linearGradient>
-        <linearGradient id="brand-gold" x1="0%" x2="100%">
-          <stop offset="0%" stopColor="#d7b35a" />
-          <stop offset="100%" stopColor="#f0d28d" />
-        </linearGradient>
-      </defs>
-
-      <path d="M22 66a42 42 0 0 1 82-14" fill="none" stroke="url(#brand-blue)" strokeWidth="6" strokeLinecap="round" />
-      <path d="M101 50a42 42 0 0 1-12 48" fill="none" stroke="url(#brand-red)" strokeWidth="6" strokeLinecap="round" />
-      <path d="M89 98A42 42 0 0 1 26 84" fill="none" stroke="url(#brand-gold)" strokeWidth="5" strokeLinecap="round" />
-
-      <path d="M30 40h22l12 9h34v44H30z" fill="none" stroke="url(#brand-blue)" strokeWidth="4.5" strokeLinejoin="round" />
-      <path d="M42 44v41" fill="none" stroke="url(#brand-blue)" strokeWidth="4" strokeLinecap="round" />
-      <path
-        d="M60 37c8 2 14 6 20 12v28c-6-6-12-10-20-12-8 2-14 6-20 12V49c6-6 12-10 20-12z"
-        fill="#fffdf8"
-        stroke="url(#brand-gold)"
-        strokeWidth="2.5"
-        strokeLinejoin="round"
-      />
-      <path d="M60 49v16" fill="none" stroke="url(#brand-gold)" strokeWidth="2" strokeLinecap="round" />
-
-      <path d="M62 12h4v10h-4zM64 18l20 62H44l20-62z" fill="#fffdf8" stroke="url(#brand-blue)" strokeWidth="4" strokeLinejoin="round" />
-      <path d="M52 42h24M48 53h32M44 66h40M37 80h54" fill="none" stroke="url(#brand-blue)" strokeWidth="3" strokeLinecap="round" />
-      <path d="M50 80c4 4 9 6 14 6s10-2 14-6" fill="none" stroke="url(#brand-blue)" strokeWidth="3" strokeLinecap="round" />
-
-      <path d="M85 30l16 6-16 6z" fill="#fffdf8" stroke="url(#brand-blue)" strokeWidth="3.5" strokeLinejoin="round" />
-      <path d="M101 36v12" fill="none" stroke="url(#brand-blue)" strokeWidth="3" strokeLinecap="round" />
-      <path d="M101 48c2 3 2 6 0 9" fill="none" stroke="url(#brand-red)" strokeWidth="2.5" strokeLinecap="round" />
-
-      <path d="M63 90c14 0 26 3 38 10" fill="none" stroke="url(#brand-blue)" strokeWidth="4" strokeLinecap="round" />
-      <path d="M65 90c-15 0-27 3-38 10" fill="none" stroke="url(#brand-red)" strokeWidth="4" strokeLinecap="round" />
-      <circle cx="96" cy="20" r="3" fill="url(#brand-red)" />
-      <circle cx="86" cy="18" r="2.3" fill="url(#brand-gold)" />
-      <circle cx="43" cy="96" r="2.3" fill="url(#brand-blue)" />
-      <circle cx="83" cy="96" r="2.3" fill="url(#brand-blue)" />
-    </svg>
+    <Image
+      src="/logo.png"
+      alt="Learn in France"
+      width={128}
+      height={128}
+      className={className}
+      priority
+    />
   )
 }
 

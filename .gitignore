@@ -37,8 +37,8 @@ coverage/
 firebase-debug.log
 firebase-service-account.json
 
-# Screenshots (dev testing)
-*.png
+# Screenshots (dev testing) — root level only, not public assets
+/*.png
 
 # Playwright MCP
 .playwright-mcp/

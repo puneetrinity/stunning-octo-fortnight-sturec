@@ -26,6 +26,10 @@ const jetbrains = JetBrains_Mono({
 export const metadata: Metadata = {
   title: 'Learn in France — Overseas Education & Student Recruitment',
   description: 'AI-powered student recruitment for studying in France',
+  icons: {
+    icon: '/favicon.png',
+    apple: '/logo-128.png',
+  },
 }
 
 export default function RootLayout({
