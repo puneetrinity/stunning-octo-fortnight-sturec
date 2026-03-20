@@ -148,7 +148,7 @@ export default function StudentLayout({ children }: { children: ReactNode }) {
   return (
     <AuthGuard>
       <RoleGuard allowed={['student']} redirectTo="/dashboard">
-        <div className="flex min-h-screen bg-surface">
+        <div className="internal-app-shell flex min-h-screen">
           {/* ── Mobile overlay ─────────────────────────────────── */}
           {sidebarOpen && (
             <div
@@ -160,7 +160,7 @@ export default function StudentLayout({ children }: { children: ReactNode }) {
           {/* ── Sidebar ────────────────────────────────────────── */}
           <aside
             className={`
-              fixed top-0 left-0 bottom-0 w-[260px] bg-sidebar flex flex-col z-50
+              fixed top-0 left-0 bottom-0 z-50 flex w-[260px] flex-col bg-sidebar shadow-[16px_0_48px_rgba(10,22,41,0.22)]
               transition-transform duration-200
               lg:translate-x-0
               ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
@@ -181,7 +181,7 @@ export default function StudentLayout({ children }: { children: ReactNode }) {
             </div>
 
             {/* Progress card */}
-            <div className="mx-3 mt-4 p-3 rounded-lg bg-sidebar-hover/60 border border-sidebar-border">
+            <div className="mx-3 mt-4 rounded-2xl border border-sidebar-border bg-sidebar-hover/60 p-3">
               <p className="text-[10px] font-semibold uppercase tracking-widest text-sidebar-text/50 mb-2">
                 Your Progress
               </p>
@@ -218,11 +218,11 @@ export default function StudentLayout({ children }: { children: ReactNode }) {
                       href={item.href}
                       onClick={() => setSidebarOpen(false)}
                       className={`
-                        group flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium
+                        group flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-medium
                         transition-all duration-150
                         ${
                           active
-                            ? 'bg-sidebar-active text-sidebar-text-active'
+                            ? 'bg-[linear-gradient(135deg,rgba(23,48,80,1),rgba(0,106,98,0.34))] text-sidebar-text-active shadow-[0_16px_30px_rgba(0,0,0,0.18)]'
                             : 'text-sidebar-text hover:bg-sidebar-hover hover:text-sidebar-text-active'
                         }
                       `}
@@ -247,8 +247,8 @@ export default function StudentLayout({ children }: { children: ReactNode }) {
             {/* User card */}
             {user && (
               <div className="border-t border-sidebar-border p-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-sidebar-hover flex items-center justify-center text-sidebar-text-active text-xs font-semibold">
+                <div className="flex items-center gap-3 rounded-2xl bg-white/4 p-3">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-sidebar-hover text-xs font-semibold text-sidebar-text-active">
                     {user.firstName?.[0]}{user.lastName?.[0]}
                   </div>
                   <div className="flex-1 min-w-0">

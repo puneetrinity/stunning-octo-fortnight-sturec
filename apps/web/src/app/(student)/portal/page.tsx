@@ -29,14 +29,30 @@ export default function PortalPage() {
 
   return (
     <div>
-      {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-xl font-bold text-text-primary font-display tracking-tight">
+      <div className="mb-6 rounded-[28px] bg-[linear-gradient(140deg,rgba(10,22,41,1),rgba(0,106,98,0.88),rgba(91,30,38,0.78))] p-6 text-white shadow-[0_24px_60px_rgba(10,22,41,0.22)] sm:p-8">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/60">
+          Student Portal
+        </p>
+        <h1 className="mt-3 text-3xl font-semibold tracking-[-0.04em] font-display">
           {greeting}, {user?.firstName ?? 'there'}
         </h1>
-        <p className="mt-1 text-sm text-text-muted">
+        <p className="mt-3 max-w-2xl text-sm leading-7 text-white/72">
           Here is an overview of your study-in-France journey.
         </p>
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+          <Link
+            href="/portal/chat"
+            className="inline-flex items-center justify-center rounded-full bg-white px-5 py-3 text-sm font-semibold text-[var(--color-public-navy)] shadow-[0_16px_34px_rgba(255,255,255,0.18)] transition-transform hover:-translate-y-0.5"
+          >
+            Open AI Advisor
+          </Link>
+          <Link
+            href="/portal/bookings"
+            className="inline-flex items-center justify-center rounded-full border border-white/18 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10"
+          >
+            Book counsellor session
+          </Link>
+        </div>
       </div>
 
       <div className="space-y-6">
@@ -159,22 +175,45 @@ export default function PortalPage() {
           )}
         </div>
 
-        {/* Quick links */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {[
-            { label: 'Applications', href: '/portal/applications' },
-            { label: 'Documents', href: '/portal/documents' },
-            { label: 'Checklist', href: '/portal/checklist' },
-            { label: 'Bookings', href: '/portal/bookings' },
-          ].map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="p-4 rounded-xl border border-border bg-surface-raised text-center text-sm font-medium text-text-primary hover:bg-surface-sunken transition-colors"
-            >
-              {link.label}
-            </Link>
-          ))}
+        <div className="grid gap-3 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
+          <Link
+            href="/portal/chat"
+            className="group rounded-[24px] bg-[linear-gradient(135deg,rgba(255,255,255,0.96),rgba(229,239,235,0.92))] p-5 shadow-[0_18px_45px_rgba(10,22,41,0.08)] transition-transform hover:-translate-y-0.5"
+          >
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary-700">
+                  Recommended next step
+                </p>
+                <h2 className="mt-3 font-display text-2xl font-semibold tracking-[-0.03em] text-text-primary">
+                  Talk to the AI advisor
+                </h2>
+                <p className="mt-2 max-w-md text-sm leading-7 text-text-secondary">
+                  Get quick guidance on programs, requirements, documents, and what to do next in your journey.
+                </p>
+              </div>
+              <span className="rounded-full bg-primary-100 px-3 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-primary-700">
+                Live chat
+              </span>
+            </div>
+          </Link>
+
+          <div className="grid grid-cols-2 gap-3">
+            {[
+              { label: 'Applications', href: '/portal/applications' },
+              { label: 'Documents', href: '/portal/documents' },
+              { label: 'Checklist', href: '/portal/checklist' },
+              { label: 'Bookings', href: '/portal/bookings' },
+            ].map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="rounded-[20px] border border-white/55 bg-[rgba(255,250,243,0.86)] p-4 text-center text-sm font-medium text-text-primary shadow-[0_12px_28px_rgba(10,22,41,0.06)] transition-colors hover:bg-white"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
     </div>

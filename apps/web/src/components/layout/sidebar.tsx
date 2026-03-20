@@ -161,14 +161,14 @@ export function Sidebar() {
   }
 
   return (
-    <aside className="fixed top-0 left-0 bottom-0 w-[260px] bg-sidebar flex flex-col z-30">
+    <aside className="fixed top-0 left-0 bottom-0 z-30 flex w-[260px] flex-col bg-sidebar shadow-[16px_0_48px_rgba(10,22,41,0.22)]">
       {/* Logo */}
-      <div className="h-16 flex items-center px-6 border-b border-sidebar-border">
-        <BrandLogo href="/dashboard" variant="compact" inverse markClassName="h-8 w-8 shrink-0" />
+      <div className="flex h-16 items-center border-b border-sidebar-border px-6">
+        <BrandLogo href="/dashboard" variant="compact" inverse markClassName="h-9 w-9 shrink-0" />
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-6">
+      <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-6">
         {NAV_SECTIONS.map((section, sIdx) => (
           <div key={sIdx}>
             {section.label && (
@@ -185,12 +185,12 @@ export function Sidebar() {
                     <Link
                       key={item.href}
                       href={item.href}
-                      className={`
-                        group flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium
+                    className={`
+                        group flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-medium
                         transition-all duration-150
                         ${
                           active
-                            ? 'bg-sidebar-active text-sidebar-text-active'
+                            ? 'bg-[linear-gradient(135deg,rgba(23,48,80,1),rgba(0,106,98,0.34))] text-sidebar-text-active shadow-[0_16px_30px_rgba(0,0,0,0.18)]'
                             : 'text-sidebar-text hover:bg-sidebar-hover hover:text-sidebar-text-active'
                         }
                       `}
@@ -208,9 +208,7 @@ export function Sidebar() {
                           {item.badge}
                         </span>
                       )}
-                      {active && (
-                        <span className="ml-auto w-1.5 h-1.5 rounded-full bg-sidebar-accent" />
-                      )}
+                      {active && <span className="ml-auto h-1.5 w-1.5 rounded-full bg-sidebar-accent" />}
                     </Link>
                   )
                 })}
@@ -222,8 +220,8 @@ export function Sidebar() {
       {/* User card */}
       {user && (
         <div className="border-t border-sidebar-border p-4">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-sidebar-hover flex items-center justify-center text-sidebar-text-active text-xs font-semibold">
+          <div className="flex items-center gap-3 rounded-2xl bg-white/4 p-3">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-sidebar-hover text-xs font-semibold text-sidebar-text-active">
               {user.firstName?.[0]}{user.lastName?.[0]}
             </div>
             <div className="flex-1 min-w-0">

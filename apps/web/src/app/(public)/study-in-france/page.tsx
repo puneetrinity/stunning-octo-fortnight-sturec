@@ -1,81 +1,89 @@
-import Link from 'next/link'
+import { EditorialCard, MarketingCTA, MarketingHero, SectionHeading } from '@/components/marketing/sections'
 
 const reasons = [
   {
-    title: 'World-class education',
+    title: 'Strong academics without defaulting to Anglophone pricing',
     description:
-      'France is home to some of the most prestigious universities and Grandes Ecoles in the world. Sorbonne, Sciences Po, HEC Paris, Ecole Polytechnique — the list goes on.',
+      'France lets students compare quality, affordability, and mobility together. That changes the shortlist for students who would otherwise only look at the UK, Canada, or Australia.',
   },
   {
-    title: 'Affordable tuition',
+    title: 'English-taught pathways still exist',
     description:
-      'Public university tuition starts at just 243 euros per year for EU students and around 2,770 euros for non-EU students at the licence level — a fraction of what comparable programs cost elsewhere.',
+      'Many postgraduate and specialized programs are delivered in English, especially in business, engineering, and international fields, while French can be added over time.',
   },
   {
-    title: 'Rich cultural experience',
+    title: 'Life after study matters',
     description:
-      'From the vibrant streets of Paris to the Mediterranean coast of Marseille, France offers an unmatched cultural experience. Museums, cuisine, architecture, and a central location in Europe.',
+      'Students often choose France for the combination of academic reputation, Schengen mobility, city diversity, and the possibility of building post-study options in Europe.',
   },
   {
-    title: 'Career opportunities',
+    title: 'The system rewards preparation',
     description:
-      'France is the second-largest economy in Europe. International graduates can apply for a job-search visa (APS) to stay and work after completing their studies.',
+      'France is a strong fit when students are organized early. Timelines, dossier quality, and sequencing matter more than last-minute scrambling.',
   },
-  {
-    title: 'English-taught programs',
-    description:
-      'Over 1,500 programs are taught entirely in English across France, particularly at the master and MBA level. You do not need to speak French to start.',
-  },
-  {
-    title: 'Student-friendly country',
-    description:
-      'Subsidized housing (CAF), discounted transport, free healthcare, and student meal plans at 3.30 euros make France one of the most affordable places to be a student.',
-  },
+]
+
+const realityCheck = [
+  'Budget planning has to include housing, deposits, transport, insurance, and early arrival costs.',
+  'Campus France and visa steps can be as important as the university application itself depending on country.',
+  'City choice affects cost, lifestyle, internships, and availability of accommodation more than many students expect.',
 ]
 
 export default function StudyInFrancePage() {
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
-      <h1 className="font-display text-3xl sm:text-4xl font-bold text-text-primary tracking-tight">
-        Why study in France?
-      </h1>
-      <p className="mt-5 text-lg text-text-muted leading-relaxed max-w-2xl">
-        France welcomes over 400,000 international students each year, making it one of the top
-        destinations for higher education worldwide. Here is why so many students choose France.
-      </p>
-
-      <div className="mt-12 grid sm:grid-cols-2 gap-8">
-        {reasons.map((reason) => (
-          <div key={reason.title}>
-            <h2 className="font-display text-lg font-semibold text-text-primary mb-2">
-              {reason.title}
-            </h2>
-            <p className="text-sm text-text-secondary leading-relaxed">
-              {reason.description}
-            </p>
+    <>
+      <MarketingHero
+        label="Why France"
+        title={<>France works best when the plan is as strong as the ambition.</>}
+        description="Students choose France for very good reasons: reputation, tuition value, international exposure, and the breadth of cities and institutions. The opportunity is real. So is the operational work needed to get there."
+        actions={[
+          { href: '/programs', label: 'Browse live programs' },
+          { href: '/apply', label: 'Build my plan', variant: 'secondary' },
+        ]}
+        aside={
+          <div className="grid gap-4">
+            <EditorialCard title="What to weigh early" tone="tinted">
+              <div className="space-y-3">
+                {realityCheck.map((item) => (
+                  <p key={item}>{item}</p>
+                ))}
+              </div>
+            </EditorialCard>
+            <EditorialCard title="Our view" tone="dark">
+              <p>
+                France is strongest for students who want a credible academic route and are
+                willing to manage the process properly from the start.
+              </p>
+            </EditorialCard>
           </div>
-        ))}
-      </div>
+        }
+      />
 
-      <div className="mt-14 pt-8 border-t border-border">
-        <p className="text-text-muted mb-4">
-          Ready to explore your options?
-        </p>
-        <div className="flex flex-col sm:flex-row gap-4">
-          <Link
-            href="/programs"
-            className="inline-block px-6 py-3 text-sm font-semibold text-white bg-primary-600 hover:bg-primary-700 rounded-xl transition-colors shadow-sm"
-          >
-            Browse programs
-          </Link>
-          <Link
-            href="/chat"
-            className="inline-block px-6 py-3 text-sm font-semibold text-text-primary bg-surface-raised hover:bg-surface-sunken border border-border rounded-xl transition-colors"
-          >
-            Talk to AI advisor
-          </Link>
+      <section className="py-12 sm:py-18">
+        <div className="public-shell">
+          <SectionHeading
+            label="Why students choose it"
+            title="The decision is bigger than prestige."
+            description="The strongest cases for France usually combine academic fit, realistic affordability, and a long-term mobility strategy."
+            align="center"
+          />
+          <div className="mt-12 grid gap-5 lg:grid-cols-2">
+            {reasons.map((reason, index) => (
+              <EditorialCard key={reason.title} title={reason.title} tone={index % 2 === 0 ? 'light' : 'tinted'}>
+                <p>{reason.description}</p>
+              </EditorialCard>
+            ))}
+          </div>
         </div>
-      </div>
-    </div>
+      </section>
+
+      <MarketingCTA
+        label="Start exploring"
+        title="Move from broad interest to an actual shortlist."
+        description="Use the public catalog if you are still comparing options, or create an account if you want the platform to start tracking your journey properly."
+        primary={{ href: '/programs', label: 'Explore programs' }}
+        secondary={{ href: '/chat', label: 'Ask the AI advisor' }}
+      />
+    </>
   )
 }

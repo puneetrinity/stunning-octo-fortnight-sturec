@@ -1,100 +1,86 @@
-import Link from 'next/link'
+import { EditorialCard, MarketingCTA, MarketingHero, SectionHeading } from '@/components/marketing/sections'
 
 const steps = [
   {
-    step: '1',
-    title: 'Get accepted into a program',
-    description: 'You need an official acceptance letter from a French institution before applying for a visa.',
+    title: 'Hold a valid admission outcome',
+    description:
+      'Before the visa stage becomes real, the academic file has to be in order. Offer letters, program details, and intake timing should already be settled.',
   },
   {
-    step: '2',
-    title: 'Register on Campus France',
-    description: 'Complete your Etudes en France dossier, pay the fee, and attend the Campus France interview in your country.',
+    title: 'Align Campus France outputs',
+    description:
+      'Where applicable, the Etudes en France dossier and interview outcome must line up with the university choice and supporting evidence.',
   },
   {
-    step: '3',
-    title: 'Apply for a student visa (VLS-TS)',
-    description: 'Submit your visa application at the French consulate in your country with the required documents.',
+    title: 'Prepare proof, not just forms',
+    description:
+      'Financial evidence, accommodation, identity documents, and supporting declarations need to be assembled coherently rather than collected at random.',
   },
   {
-    step: '4',
-    title: 'Validate your visa in France',
-    description: 'Within three months of arrival, validate your VLS-TS visa online to obtain your residence permit.',
+    title: 'Validate quickly after arrival',
+    description:
+      'Arrival is not the end of the visa workflow. Students still need to complete the in-country validation steps on time.',
   },
+]
+
+const documents = [
+  'Passport valid beyond the planned stay',
+  'Official admission or enrollment evidence',
+  'Proof of funds for living costs',
+  'Accommodation evidence or housing plan',
+  'Campus France record where required',
+  'Insurance and other country-specific additions',
 ]
 
 export default function VisaPage() {
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
-      <h1 className="font-display text-3xl sm:text-4xl font-bold text-text-primary tracking-tight">
-        Visa guide for France
-      </h1>
-      <p className="mt-5 text-lg text-text-muted leading-relaxed max-w-2xl">
-        A step-by-step overview of the French student visa process. Requirements vary by
-        nationality — our counsellors can help with your specific situation.
-      </p>
+    <>
+      <MarketingHero
+        label="Visa"
+        title={<>Visa readiness comes from sequence, not panic.</>}
+        description="French visa requirements vary by country, but the same pattern appears every year: students struggle less when they treat visa preparation as the final layer of a larger process rather than a standalone event."
+        actions={[
+          { href: '/apply', label: 'Get visa support' },
+          { href: '/book', label: 'Book a consultation', variant: 'secondary' },
+        ]}
+        aside={
+          <EditorialCard title="Common document stack" tone="tinted">
+            <div className="space-y-3">
+              {documents.map((document) => (
+                <div key={document} className="flex items-start gap-3">
+                  <span className="mt-1 h-2.5 w-2.5 rounded-full bg-[var(--color-public-burgundy)]" />
+                  <p>{document}</p>
+                </div>
+              ))}
+            </div>
+          </EditorialCard>
+        }
+      />
 
-      <div className="mt-12 space-y-8">
-        {steps.map((s) => (
-          <div key={s.step} className="flex items-start gap-5">
-            <div className="w-10 h-10 rounded-xl bg-primary-50 text-primary-600 flex items-center justify-center shrink-0 font-display font-bold text-lg">
-              {s.step}
-            </div>
-            <div>
-              <h2 className="font-display text-lg font-semibold text-text-primary">
-                {s.title}
-              </h2>
-              <p className="mt-1 text-sm text-text-secondary leading-relaxed">
-                {s.description}
-              </p>
-            </div>
+      <section className="py-12 sm:py-18">
+        <div className="public-shell">
+          <SectionHeading
+            label="Flow"
+            title="Think in four layers."
+            description="Most visa mistakes happen because the student is rushing to solve everything at once. A layered process is easier to manage and easier to verify."
+          />
+          <div className="mt-12 grid gap-5 md:grid-cols-2">
+            {steps.map((step, index) => (
+              <EditorialCard key={step.title} title={step.title} tone={index === 2 ? 'dark' : 'light'}>
+                <p>{step.description}</p>
+              </EditorialCard>
+            ))}
           </div>
-        ))}
-      </div>
+        </div>
+      </section>
 
-      <div className="mt-12 bg-surface-raised rounded-2xl border border-border p-6">
-        <h3 className="font-display text-base font-semibold text-text-primary mb-2">
-          Common required documents
-        </h3>
-        <ul className="space-y-2 text-sm text-text-secondary">
-          <li className="flex items-start gap-2">
-            <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary-400 shrink-0" />
-            Valid passport (at least 3 months beyond your planned stay)
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary-400 shrink-0" />
-            Acceptance letter from a French institution
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary-400 shrink-0" />
-            Proof of financial resources (approx. 615 euros/month)
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary-400 shrink-0" />
-            Proof of accommodation in France
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary-400 shrink-0" />
-            Campus France attestation
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary-400 shrink-0" />
-            Travel insurance covering your stay
-          </li>
-        </ul>
-      </div>
-
-      <div className="mt-14 pt-8 border-t border-border">
-        <p className="text-text-muted mb-4">
-          Need help with your visa application?
-        </p>
-        <Link
-          href="/apply"
-          className="inline-block px-6 py-3 text-sm font-semibold text-white bg-primary-600 hover:bg-primary-700 rounded-xl transition-colors shadow-sm"
-        >
-          Get personalized support
-        </Link>
-      </div>
-    </div>
+      <MarketingCTA
+        label="Next move"
+        title="Get your visa readiness reviewed before the deadline gets close."
+        description="Use the student flow to keep evidence organized and visible, or book a consultation if you need a human review of your situation."
+        primary={{ href: '/auth/register', label: 'Create student account' }}
+        secondary={{ href: '/book', label: 'Book a consultation' }}
+      />
+    </>
   )
 }

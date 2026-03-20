@@ -21,8 +21,8 @@ export function Card({
   return (
     <div
       className={`
-        bg-surface-raised rounded-xl border border-border
-        shadow-[0_1px_3px_rgba(0,0,0,0.04)]
+        bg-[rgba(255,250,243,0.9)] rounded-[24px] border border-white/60 backdrop-blur-sm
+        shadow-[0_18px_45px_rgba(10,22,41,0.07)]
         ${paddingStyles[padding]}
         ${className}
       `}

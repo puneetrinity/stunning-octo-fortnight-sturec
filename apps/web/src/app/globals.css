@@ -5,35 +5,35 @@
   --font-display: var(--font-bricolage), serif;
   --font-mono: var(--font-jetbrains), monospace;
 
-  --color-primary-50: #f0fdfa;
-  --color-primary-100: #ccfbf1;
-  --color-primary-200: #99f6e4;
-  --color-primary-300: #5eead4;
-  --color-primary-400: #2dd4bf;
-  --color-primary-500: #14b8a6;
-  --color-primary-600: #0d9488;
-  --color-primary-700: #0f766e;
-  --color-primary-800: #115e59;
-  --color-primary-900: #134e4a;
-  --color-primary-950: #042f2e;
+  --color-primary-50: #eef7f5;
+  --color-primary-100: #d8ece7;
+  --color-primary-200: #b5dcd4;
+  --color-primary-300: #7cc1b3;
+  --color-primary-400: #40a694;
+  --color-primary-500: #168a79;
+  --color-primary-600: #006a62;
+  --color-primary-700: #0c5b55;
+  --color-primary-800: #104945;
+  --color-primary-900: #103b39;
+  --color-primary-950: #072726;
 
-  --color-surface: #f8f8f6;
-  --color-surface-raised: #ffffff;
-  --color-surface-sunken: #f0efed;
+  --color-surface: #f4efe5;
+  --color-surface-raised: #fffaf3;
+  --color-surface-sunken: #ede5d8;
 
-  --color-sidebar: #0c0f1a;
-  --color-sidebar-hover: #161a2c;
-  --color-sidebar-active: #1c2136;
-  --color-sidebar-text: #7c86a2;
-  --color-sidebar-text-active: #f1f5f9;
-  --color-sidebar-accent: #14b8a6;
-  --color-sidebar-border: #1e2338;
+  --color-sidebar: #0a1629;
+  --color-sidebar-hover: #11223d;
+  --color-sidebar-active: #173050;
+  --color-sidebar-text: #93a7bf;
+  --color-sidebar-text-active: #f6f0e5;
+  --color-sidebar-accent: #53c4b1;
+  --color-sidebar-border: #213655;
 
-  --color-border: #e2e0dc;
-  --color-border-strong: #c8c5bf;
-  --color-text-primary: #1a1a1a;
-  --color-text-secondary: #5c5c5c;
-  --color-text-muted: #8c8c8c;
+  --color-border: #ddd3c3;
+  --color-border-strong: #c4b79f;
+  --color-text-primary: #162436;
+  --color-text-secondary: #536171;
+  --color-text-muted: #768595;
 
   --color-priority-p1: #e11d48;
   --color-priority-p1-bg: #fff1f2;
@@ -51,6 +51,14 @@
   --color-score-high: #10b981;
   --color-score-mid: #f59e0b;
   --color-score-low: #ef4444;
+
+  --color-public-navy: #0a1629;
+  --color-public-teal: #006a62;
+  --color-public-burgundy: #5b1e26;
+  --color-public-cream: #f6f0e5;
+  --color-public-mist: #e5efeb;
+  --color-public-slate: #415468;
+  --color-public-muted: #708191;
 }
 
 body {
@@ -73,4 +81,101 @@ body {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-border-strong);
+}
+
+.public-page {
+  background:
+    radial-gradient(circle at top left, rgba(0, 106, 98, 0.14), transparent 24%),
+    radial-gradient(circle at top right, rgba(91, 30, 38, 0.1), transparent 28%),
+    linear-gradient(180deg, var(--color-public-cream) 0%, #f7f4ee 42%, #f3efe7 100%);
+}
+
+.public-shell {
+  max-width: 84rem;
+  margin-inline: auto;
+  padding-inline: 1rem;
+}
+
+@media (min-width: 640px) {
+  .public-shell {
+    padding-inline: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .public-shell {
+    padding-inline: 2rem;
+  }
+}
+
+.public-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.78);
+  padding: 0.7rem 1rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-public-teal);
+  box-shadow: 0 14px 40px rgba(10, 22, 41, 0.06);
+}
+
+.public-panel {
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 20px 60px rgba(10, 22, 41, 0.08);
+}
+
+.public-button-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background: linear-gradient(140deg, var(--color-public-teal), #0f857d);
+  padding: 0.9rem 1.4rem;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: white;
+  box-shadow: 0 18px 34px rgba(0, 106, 98, 0.24);
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    opacity 160ms ease;
+}
+
+.public-button-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 20px 40px rgba(0, 106, 98, 0.3);
+}
+
+.public-button-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 0.9rem 1.4rem;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--color-public-navy);
+  box-shadow: 0 12px 32px rgba(10, 22, 41, 0.06);
+  transition:
+    transform 160ms ease,
+    background-color 160ms ease;
+}
+
+.public-button-secondary:hover {
+  transform: translateY(-1px);
+  background: white;
+}
+
+.internal-app-shell {
+  background:
+    radial-gradient(circle at top right, rgba(0, 106, 98, 0.08), transparent 26%),
+    radial-gradient(circle at top left, rgba(91, 30, 38, 0.08), transparent 28%),
+    linear-gradient(180deg, #f5f1e8 0%, #f1ece3 100%);
 }

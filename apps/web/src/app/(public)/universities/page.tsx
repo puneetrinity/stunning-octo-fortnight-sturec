@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
+
 import { env } from '@/lib/config/env'
 
 interface University {
@@ -21,91 +22,101 @@ export default function UniversitiesPage() {
   useEffect(() => {
     async function fetchUniversities() {
       try {
-        const res = await fetch(`${env.apiUrl}/api/v1/public/universities?limit=100`)
-        if (!res.ok) throw new Error('Failed to fetch')
-        const data = await res.json()
+        const response = await fetch(`${env.apiUrl}/api/v1/public/universities?limit=100`)
+        if (!response.ok) throw new Error('Failed to fetch universities')
+        const data = await response.json()
         setUniversities(data.items ?? [])
       } catch {
-        // API unavailable — leave empty
+        setUniversities([])
       } finally {
         setLoading(false)
       }
     }
+
     fetchUniversities()
   }, [])
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
-      <div className="mb-12">
-        <h1 className="font-display text-3xl sm:text-4xl font-bold text-text-primary tracking-tight">
-          Universities in France
-        </h1>
-        <p className="mt-4 text-lg text-text-muted max-w-2xl">
-          France has over 3,500 higher education institutions. Here are the
-          universities and Grandes Ecoles we partner with.
-        </p>
+    <div className="public-shell py-10 sm:py-16">
+      <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start">
+        <div>
+          <span className="public-label">Universities</span>
+          <h1 className="mt-6 text-5xl font-semibold leading-[0.96] tracking-[-0.04em] text-[var(--color-public-navy)] sm:text-6xl">
+            Institutions students actually ask about.
+          </h1>
+          <p className="mt-6 max-w-2xl text-lg leading-8 text-[color:var(--color-public-slate)]">
+            France offers a wide spread of public universities, specialized schools, and private
+            institutions. This list shows the active university dataset exposed on the public side.
+          </p>
+        </div>
+        <div className="public-panel p-6">
+          <p className="text-sm leading-7 text-[color:var(--color-public-slate)]">
+            Use this page to explore names and locations. Use the programs catalog when you need a
+            real degree shortlist. Use registration when you want advice tailored to your profile.
+          </p>
+        </div>
       </div>
 
       {loading ? (
-        <div className="text-center py-16">
-          <div className="inline-block w-6 h-6 border-2 border-primary-600 border-t-transparent rounded-full animate-spin" />
-          <p className="text-sm text-text-muted mt-3">Loading universities...</p>
+        <div className="py-20 text-center">
+          <div className="mx-auto h-7 w-7 animate-spin rounded-full border-2 border-[var(--color-public-teal)] border-t-transparent" />
+          <p className="mt-4 text-sm text-[color:var(--color-public-muted)]">Loading universities...</p>
         </div>
       ) : universities.length === 0 ? (
-        <div className="text-center py-16">
-          <p className="text-text-muted">No universities listed yet. Check back soon.</p>
+        <div className="py-20 text-center text-[color:var(--color-public-muted)]">
+          No universities are visible yet.
         </div>
       ) : (
-        <div className="grid md:grid-cols-2 gap-6">
-          {universities.map((uni) => (
-            <div
-              key={uni.id}
-              className="bg-surface-raised rounded-xl border border-border p-6 hover:shadow-[0_4px_24px_rgba(0,0,0,0.06)] transition-shadow"
-            >
-              <div className="flex items-start justify-between gap-4 mb-2">
-                <h2 className="font-display text-lg font-semibold text-text-primary">
-                  {uni.name}
+        <div className="mt-10 grid gap-5 lg:grid-cols-2">
+          {universities.map((university) => (
+            <div key={university.id} className="public-panel p-6">
+              <div className="flex items-start justify-between gap-4">
+                <h2 className="text-2xl font-semibold tracking-[-0.03em] text-[var(--color-public-navy)]">
+                  {university.name}
                 </h2>
-                {uni.partnerStatus && (
-                  <span className="px-2.5 py-0.5 text-xs font-semibold text-primary-700 bg-primary-50 rounded-full ring-1 ring-inset ring-primary-200 whitespace-nowrap">
-                    {uni.partnerStatus}
+                {university.partnerStatus && (
+                  <span className="rounded-full bg-white px-3 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--color-public-burgundy)]">
+                    {university.partnerStatus}
                   </span>
                 )}
               </div>
-              <div className="flex items-center gap-4 text-xs text-text-muted mt-3">
-                <span className="flex items-center gap-1">
-                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
-                  </svg>
-                  {uni.city}, {uni.country}
+              <p className="mt-4 text-sm leading-7 text-[color:var(--color-public-slate)]">
+                {university.city}, {university.country}
+              </p>
+              <div className="mt-6 flex items-center justify-between gap-4">
+                <span className="text-xs font-semibold uppercase tracking-[0.16em] text-[color:var(--color-public-muted)]">
+                  {university.active ? 'Active listing' : 'Inactive'}
                 </span>
-                {uni.websiteUrl && (
+                {university.websiteUrl ? (
                   <a
-                    href={uni.websiteUrl}
+                    href={university.websiteUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-primary-600 hover:underline"
+                    className="text-sm font-semibold text-[var(--color-public-teal)]"
                   >
-                    Website
+                    Visit website
                   </a>
-                )}
+                ) : null}
               </div>
             </div>
           ))}
         </div>
       )}
 
-      <div className="mt-16 text-center">
-        <p className="text-text-muted mb-4">
-          Looking for a specific university or program?
-        </p>
-        <Link
-          href="/programs"
-          className="inline-block px-6 py-3 text-sm font-semibold text-white bg-primary-600 hover:bg-primary-700 rounded-xl transition-colors shadow-sm"
-        >
-          Search programs
-        </Link>
+      <div className="mt-14">
+        <div className="public-panel p-8 text-center">
+          <p className="text-base leading-8 text-[color:var(--color-public-slate)]">
+            Need help translating institutions into a shortlist?
+          </p>
+          <div className="mt-5 flex flex-col justify-center gap-3 sm:flex-row">
+            <Link href="/programs" className="public-button-primary">
+              Explore programs
+            </Link>
+            <Link href="/chat" className="public-button-secondary">
+              Ask the AI advisor
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
   )

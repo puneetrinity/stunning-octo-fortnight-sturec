@@ -1,87 +1,83 @@
-import Link from 'next/link'
+import { EditorialCard, MarketingCTA, MarketingHero, SectionHeading } from '@/components/marketing/sections'
+
+const stages = [
+  {
+    title: 'Create the dossier early',
+    description:
+      'Open the Etudes en France profile as soon as your country window opens. Waiting until applications are almost due compresses every later step.',
+  },
+  {
+    title: 'Prepare documents for review',
+    description:
+      'Transcripts, passports, translations, motivation material, and program choices need to be internally consistent. Small inconsistencies slow everything down.',
+  },
+  {
+    title: 'Handle the interview properly',
+    description:
+      'The interview is usually short, but it tests whether your study plan is coherent. Students need a story that connects academics, destination, and next step.',
+  },
+  {
+    title: 'Carry the dossier into visa readiness',
+    description:
+      'Campus France is not the end of the process. Its output feeds directly into later visa and departure steps.',
+  },
+]
+
+const mistakes = [
+  'Treating Campus France as a formality instead of a decision checkpoint',
+  'Uploading documents late and then rushing translations or corrections',
+  'Choosing programs without a coherent academic or career narrative',
+]
 
 export default function CampusFrancePage() {
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
-      <h1 className="font-display text-3xl sm:text-4xl font-bold text-text-primary tracking-tight">
-        Campus France guide
-      </h1>
-      <p className="mt-5 text-lg text-text-muted leading-relaxed max-w-2xl">
-        Campus France is the national agency responsible for promoting French higher education
-        abroad and managing the pre-visa application process for international students. If you
-        are applying from a country with a Campus France office, you must go through the
-        &ldquo;Etudes en France&rdquo; procedure.
-      </p>
+    <>
+      <MarketingHero
+        label="Campus France"
+        title={<>Campus France is a workflow, not a box to tick.</>}
+        description="For students in CEF countries, the Campus France process is one of the defining operational layers of the move to France. The dossier, timing, and interview all influence how smooth the rest of the journey becomes."
+        actions={[
+          { href: '/apply', label: 'Get guided support' },
+          { href: '/chat', label: 'Ask a question first', variant: 'secondary' },
+        ]}
+        aside={
+          <EditorialCard title="Where students lose momentum" tone="dark">
+            <div className="space-y-3">
+              {mistakes.map((mistake) => (
+                <div key={mistake} className="flex items-start gap-3">
+                  <span className="mt-1 h-2.5 w-2.5 rounded-full bg-white/75" />
+                  <p>{mistake}</p>
+                </div>
+              ))}
+            </div>
+          </EditorialCard>
+        }
+      />
 
-      <div className="mt-12 space-y-10">
-        <section>
-          <h2 className="font-display text-xl font-semibold text-text-primary mb-3">
-            What is the Etudes en France procedure?
-          </h2>
-          <p className="text-text-secondary leading-relaxed">
-            The Etudes en France platform is an online portal where you create a dossier, submit
-            your academic documents, choose programs to apply to, and schedule an interview with
-            Campus France in your country. It is a mandatory step before you can apply for a
-            student visa from countries that have a Campus France presence (known as CEF countries).
-          </p>
-        </section>
-
-        <section>
-          <h2 className="font-display text-xl font-semibold text-text-primary mb-3">
-            Key timelines
-          </h2>
-          <p className="text-text-secondary leading-relaxed">
-            The Etudes en France portal typically opens between October and December for the
-            following academic year. Deadlines vary by country and program type, but most fall
-            between January and March. Starting early gives you time to gather documents, get
-            translations, and handle any issues.
-          </p>
-        </section>
-
-        <section>
-          <h2 className="font-display text-xl font-semibold text-text-primary mb-3">
-            The Campus France interview
-          </h2>
-          <p className="text-text-secondary leading-relaxed">
-            After submitting your dossier, you will be invited for an interview at the Campus
-            France office in your country. The interview is typically 15 to 20 minutes and
-            covers your motivation, study plan, and career goals. It is conducted in French
-            or English depending on your program and language level.
-          </p>
-        </section>
-
-        <section>
-          <h2 className="font-display text-xl font-semibold text-text-primary mb-3">
-            How Learn in France helps
-          </h2>
-          <p className="text-text-secondary leading-relaxed">
-            Our counsellors guide you through every step of the Campus France procedure. From
-            creating your Etudes en France dossier to preparing for the interview, we ensure
-            nothing is missed. Our AI advisor can also answer specific questions about the
-            process at any time.
-          </p>
-        </section>
-      </div>
-
-      <div className="mt-14 pt-8 border-t border-border">
-        <p className="text-text-muted mb-4">
-          Need help navigating Campus France?
-        </p>
-        <div className="flex flex-col sm:flex-row gap-4">
-          <Link
-            href="/apply"
-            className="inline-block px-6 py-3 text-sm font-semibold text-white bg-primary-600 hover:bg-primary-700 rounded-xl transition-colors shadow-sm"
-          >
-            Get started
-          </Link>
-          <Link
-            href="/chat"
-            className="inline-block px-6 py-3 text-sm font-semibold text-text-primary bg-surface-raised hover:bg-surface-sunken border border-border rounded-xl transition-colors"
-          >
-            Ask our AI advisor
-          </Link>
+      <section className="py-12 sm:py-18">
+        <div className="public-shell">
+          <SectionHeading
+            label="Process"
+            title="A simpler way to think about Etudes en France."
+            description="Students do better when the procedure is broken into clear operational stages instead of one intimidating block."
+          />
+          <div className="mt-12 grid gap-5 lg:grid-cols-2">
+            {stages.map((stage, index) => (
+              <EditorialCard key={stage.title} title={stage.title} tone={index === 1 ? 'dark' : 'light'}>
+                <p>{stage.description}</p>
+              </EditorialCard>
+            ))}
+          </div>
         </div>
-      </div>
-    </div>
+      </section>
+
+      <MarketingCTA
+        label="Ready to start"
+        title="Use the platform to keep the procedure visible."
+        description="Create your account to track requirements, ask questions as they arise, and move through the process with actual support instead of scattered notes."
+        primary={{ href: '/auth/register', label: 'Create account' }}
+        secondary={{ href: '/contact', label: 'Talk to the team' }}
+      />
+    </>
   )
 }
