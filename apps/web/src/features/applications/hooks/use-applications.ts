@@ -5,6 +5,7 @@ import type {
   PaginationParams,
   ApplicationListItem,
   ApplicationStatus,
+  AnalyticsOverview,
 } from '@sturec/shared'
 import api from '@/lib/api/client'
 
@@ -38,6 +39,18 @@ export function useApplications(params: UseApplicationsParams = {}) {
 
       return api.get('/applications', { params: apiParams }) as unknown as PaginatedResponse<ApplicationListItem>
     },
+  })
+}
+
+// ─── Stats hook ─────────────────────────────────────────────────
+
+export type ApplicationStats = AnalyticsOverview['data']['applications']
+
+export function useApplicationStats() {
+  return useQuery({
+    queryKey: ['analytics', 'overview', {}],
+    queryFn: () => api.get('/analytics/overview') as unknown as AnalyticsOverview,
+    select: (overview) => overview.data.applications,
   })
 }
 

@@ -1111,6 +1111,110 @@ describe('Route-level smoke tests', () => {
     })
   })
 
+  // ─── Internal notifications (/users/me/notifications) ───────
+
+  describe('Internal notifications module', () => {
+    it('GET /users/me/notifications returns items and unread count', async () => {
+      authAs(COUNSELLOR_USER)
+      db.notificationLog.findMany.mockResolvedValue([
+        {
+          id: '00000000-0000-0000-0000-000000000401',
+          templateKey: 'lead_assigned',
+          channel: 'email',
+          status: 'sent',
+          readAt: null,
+          sentAt: new Date('2026-03-20T08:00:00.000Z'),
+          createdAt: new Date('2026-03-20T07:55:00.000Z'),
+          payloadJson: { leadId: 'lead-1' },
+        },
+      ])
+      db.notificationLog.count.mockResolvedValue(1)
+
+      const response = await app.inject({
+        method: 'GET',
+        url: '/api/v1/users/me/notifications',
+        headers: authHeaders(),
+      })
+
+      expect(response.statusCode).toBe(200)
+      expect(JSON.parse(response.body)).toEqual({
+        items: [
+          expect.objectContaining({
+            id: '00000000-0000-0000-0000-000000000401',
+            templateKey: 'lead_assigned',
+            readAt: null,
+          }),
+        ],
+        unreadCount: 1,
+      })
+      expect(db.notificationLog.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { userId: COUNSELLOR_USER.id },
+          take: 20,
+        }),
+      )
+    })
+
+    it('PATCH /users/me/notifications/:id/read marks one notification as read', async () => {
+      authAs(COUNSELLOR_USER)
+      db.notificationLog.updateMany.mockResolvedValue({ count: 1 })
+
+      const response = await app.inject({
+        method: 'PATCH',
+        url: '/api/v1/users/me/notifications/00000000-0000-0000-0000-000000000401/read',
+        headers: authHeaders(),
+      })
+
+      expect(response.statusCode).toBe(200)
+      expect(JSON.parse(response.body)).toEqual({ ok: true })
+      expect(db.notificationLog.updateMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: {
+            id: '00000000-0000-0000-0000-000000000401',
+            userId: COUNSELLOR_USER.id,
+          },
+        }),
+      )
+    })
+
+    it('PATCH /users/me/notifications/read-all marks all current user notifications as read', async () => {
+      authAs(COUNSELLOR_USER)
+      db.notificationLog.updateMany.mockResolvedValue({ count: 3 })
+
+      const response = await app.inject({
+        method: 'PATCH',
+        url: '/api/v1/users/me/notifications/read-all',
+        headers: authHeaders(),
+      })
+
+      expect(response.statusCode).toBe(200)
+      expect(JSON.parse(response.body)).toEqual({ ok: true })
+      expect(db.notificationLog.updateMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: {
+            userId: COUNSELLOR_USER.id,
+            readAt: null,
+          },
+        }),
+      )
+    })
+
+    it('student can access GET /users/me/notifications for their own inbox', async () => {
+      authAs(STUDENT_USER)
+      db.notificationLog.findMany.mockResolvedValue([])
+      db.notificationLog.count.mockResolvedValue(0)
+
+      const response = await app.inject({
+        method: 'GET',
+        url: '/api/v1/users/me/notifications',
+        headers: authHeaders(),
+      })
+
+      expect(response.statusCode).toBe(200)
+      expect(JSON.parse(response.body)).toEqual({ items: [], unreadCount: 0 })
+    })
+  })
+
   // ─── Chat module ────────────────────────────────────────────
 
   describe('Chat module', () => {

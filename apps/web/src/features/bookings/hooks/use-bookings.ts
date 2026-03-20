@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
-import type { BookingListItem, BookingStatus } from '@sturec/shared'
+import type { BookingListItem, BookingStatus, AnalyticsOverview } from '@sturec/shared'
 import api from '@/lib/api/client'
 import { fetchTeamMembers, buildNameMap, resolveName } from '@/features/team/lib/team-cache'
 
@@ -37,6 +37,18 @@ export function useBookings(params: UseBookingsParams = {}) {
 
       return items
     },
+  })
+}
+
+// ─── Stats hook ─────────────────────────────────────────────────
+
+export type BookingStats = AnalyticsOverview['data']['bookings']
+
+export function useBookingStats() {
+  return useQuery({
+    queryKey: ['analytics', 'overview', {}],
+    queryFn: () => api.get('/analytics/overview') as unknown as AnalyticsOverview,
+    select: (overview) => overview.data.bookings,
   })
 }
 

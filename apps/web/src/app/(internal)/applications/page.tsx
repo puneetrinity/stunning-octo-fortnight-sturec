@@ -4,14 +4,13 @@ import { useState } from 'react'
 
 import type { ApplicationListItem, ApplicationStatus } from '@sturec/shared'
 import { PageHeader } from '@/components/layout/page-header'
-import { FilterBar } from '@/components/shared/filter-bar'
 import { Table, type Column } from '@/components/ui/table'
 import { Select } from '@/components/ui/select'
 import { Pagination } from '@/components/ui/pagination'
 import { Badge } from '@/components/ui/badge'
 import { EmptyState } from '@/components/ui/empty-state'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
-import { useApplications } from '@/features/applications/hooks/use-applications'
+import { useApplications, useApplicationStats } from '@/features/applications/hooks/use-applications'
 
 const STATUS_VARIANTS: Record<string, 'muted' | 'info' | 'warning' | 'success' | 'danger'> = {
   draft: 'muted',
@@ -30,6 +29,9 @@ export default function ApplicationsPage() {
   const { data, isLoading } = useApplications({
     page, limit: 20, status, sortBy, sortOrder,
   })
+  const { data: stats } = useApplicationStats()
+
+  const hasFilters = !!status
 
   function handleSort(key: string) {
     if (sortBy === key) {
@@ -106,41 +108,63 @@ export default function ApplicationsPage() {
         badge={data ? <Badge variant="muted">{data.total} total</Badge> : null}
       />
 
-      <FilterBar
-        search=""
-        onSearchChange={() => {}}
-        searchPlaceholder=""
-      >
-        <Select
-          options={[
-            { value: '', label: 'All statuses' },
-            { value: 'draft', label: 'Draft' },
-            { value: 'submitted', label: 'Submitted' },
-            { value: 'offer', label: 'Offer' },
-            { value: 'rejected', label: 'Rejected' },
-            { value: 'enrolled', label: 'Enrolled' },
-          ]}
-          value={status}
-          onChange={(e) => { setStatus(e.target.value as ApplicationStatus | ''); setPage(1) }}
-          className="w-36"
-        />
-      </FilterBar>
+      {/* Summary metrics */}
+      {stats && (
+        <div className="grid grid-cols-2 gap-3 mb-6 sm:grid-cols-4">
+          <MetricCard label="Total" value={stats.total} />
+          <MetricCard label="Submitted" value={stats.submitted} accent="bg-sky-500" />
+          <MetricCard label="Offers" value={stats.offers} accent="bg-emerald-500" />
+          <MetricCard label="Enrolled" value={stats.enrolled} accent="bg-primary-500" />
+        </div>
+      )}
 
+      {/* Filter panel */}
+      <div className="rounded-2xl bg-white/50 border border-white/70 px-4 py-3 mb-5 backdrop-blur-sm">
+        <div className="flex flex-wrap items-center gap-3">
+          <Select
+            options={[
+              { value: '', label: 'All statuses' },
+              { value: 'draft', label: 'Draft' },
+              { value: 'submitted', label: 'Submitted' },
+              { value: 'offer', label: 'Offer' },
+              { value: 'rejected', label: 'Rejected' },
+              { value: 'enrolled', label: 'Enrolled' },
+            ]}
+            value={status}
+            onChange={(e) => { setStatus(e.target.value as ApplicationStatus | ''); setPage(1) }}
+            className="w-36"
+          />
+          {hasFilters && (
+            <button
+              onClick={() => { setStatus(''); setPage(1) }}
+              className="text-xs font-medium text-primary-600 hover:text-primary-700 transition-colors"
+            >
+              Clear filters
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Data table */}
       {isLoading ? (
         <div className="flex items-center justify-center py-20">
           <LoadingSpinner size="lg" />
         </div>
       ) : !data?.items.length ? (
-        <EmptyState
-          title="No applications found"
-          description={status ? 'Try adjusting your filters.' : 'Applications will appear here as counsellors create them for students.'}
-          icon={
-            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-              <rect x="8" y="4" width="32" height="40" rx="4" stroke="currentColor" strokeWidth="2" />
-              <path d="M16 16h16M16 24h16M16 32h8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-            </svg>
-          }
-        />
+        <div className="rounded-2xl bg-white/50 border border-white/70 backdrop-blur-sm">
+          <EmptyState
+            title="No applications found"
+            description={hasFilters
+              ? 'No applications match this status filter. Try selecting a different status.'
+              : 'Applications will appear here as counsellors create them for students. Start by converting a lead to a student.'}
+            icon={
+              <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                <rect x="8" y="4" width="32" height="40" rx="4" stroke="currentColor" strokeWidth="2" />
+                <path d="M16 16h16M16 24h16M16 32h8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+            }
+          />
+        </div>
       ) : (
         <>
           <div className="bg-surface-raised rounded-xl border border-border overflow-hidden">
@@ -161,6 +185,18 @@ export default function ApplicationsPage() {
           />
         </>
       )}
+    </div>
+  )
+}
+
+function MetricCard({ label, value, accent }: { label: string; value: number; accent?: string }) {
+  return (
+    <div className="rounded-2xl bg-white/60 border border-white/80 px-4 py-3.5 backdrop-blur-sm">
+      <div className="flex items-center gap-2 mb-1">
+        {accent && <span className={`h-2 w-2 rounded-full ${accent}`} />}
+        <p className="text-[11px] font-medium text-text-muted uppercase tracking-wider">{label}</p>
+      </div>
+      <p className="text-2xl font-bold font-display text-text-primary tracking-tight">{value}</p>
     </div>
   )
 }

@@ -15,6 +15,7 @@ import { studentPortalRoutes } from '../src/modules/student-portal/routes.js'
 import { chatRoutes } from '../src/modules/chat/routes.js'
 import { webhookRoutes } from '../src/modules/webhooks/routes.js'
 import { opsRoutes } from '../src/modules/ops/routes.js'
+import { notificationRoutes } from '../src/modules/notifications/routes.js'
 
 export async function createTestApp(): Promise<FastifyInstance> {
   const app = Fastify({ logger: false })
@@ -43,6 +44,7 @@ export async function createFullTestApp(): Promise<FastifyInstance> {
   await app.register(chatRoutes, { prefix: '/api/v1' })
   await app.register(webhookRoutes, { prefix: '/api/v1' })
   await app.register(opsRoutes, { prefix: '/api/v1' })
+  await app.register(notificationRoutes, { prefix: '/api/v1' })
   await app.ready()
   return app
 }

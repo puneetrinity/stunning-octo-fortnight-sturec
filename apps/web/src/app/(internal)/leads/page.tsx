@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation'
 
 import type { LeadStatus, LeadSource, PriorityLevel } from '@sturec/shared'
 import { PageHeader } from '@/components/layout/page-header'
-import { FilterBar } from '@/components/shared/filter-bar'
 import { PriorityBadge } from '@/components/shared/priority-badge'
 import { StatusBadge } from '@/components/shared/status-badge'
 import { Table, type Column } from '@/components/ui/table'
@@ -15,7 +14,8 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
-import { useLeads, type LeadListItemView } from '@/features/leads/hooks/use-leads'
+import { SearchInput } from '@/components/ui/search-input'
+import { useLeads, useLeadStats, type LeadListItemView } from '@/features/leads/hooks/use-leads'
 
 export default function LeadsPage() {
   const router = useRouter()
@@ -28,15 +28,19 @@ export default function LeadsPage() {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
 
   const { data, isLoading } = useLeads({
-    page,
-    limit: 20,
-    search,
-    status,
-    source,
-    priority,
-    sortBy,
-    sortOrder,
+    page, limit: 20, search, status, source, priority, sortBy, sortOrder,
   })
+  const { data: stats } = useLeadStats()
+
+  const hasFilters = !!(search || status || source || priority)
+
+  function clearFilters() {
+    setSearch('')
+    setStatus('')
+    setSource('')
+    setPriority('')
+    setPage(1)
+  }
 
   function handleSort(key: string) {
     if (sortBy === key) {
@@ -131,68 +135,96 @@ export default function LeadsPage() {
         }
       />
 
-      <FilterBar
-        search={search}
-        onSearchChange={(v) => { setSearch(v); setPage(1) }}
-        searchPlaceholder="Search leads by name or email..."
-      >
-        <Select
-          options={[
-            { value: '', label: 'All statuses' },
-            { value: 'new', label: 'New' },
-            { value: 'nurturing', label: 'Nurturing' },
-            { value: 'qualified', label: 'Qualified' },
-            { value: 'disqualified', label: 'Disqualified' },
-            { value: 'converted', label: 'Converted' },
-          ]}
-          value={status}
-          onChange={(e) => { setStatus(e.target.value as LeadStatus | ''); setPage(1) }}
-          className="w-36"
-        />
-        <Select
-          options={[
-            { value: '', label: 'All sources' },
-            { value: 'marketing', label: 'Marketing' },
-            { value: 'university', label: 'University' },
-            { value: 'referral', label: 'Referral' },
-            { value: 'whatsapp', label: 'WhatsApp' },
-            { value: 'ads', label: 'Ads' },
-            { value: 'manual', label: 'Manual' },
-          ]}
-          value={source}
-          onChange={(e) => { setSource(e.target.value as LeadSource | ''); setPage(1) }}
-          className="w-36"
-        />
-        <Select
-          options={[
-            { value: '', label: 'All priorities' },
-            { value: 'p1', label: 'P1 — High' },
-            { value: 'p2', label: 'P2 — Medium' },
-            { value: 'p3', label: 'P3 — Low' },
-          ]}
-          value={priority}
-          onChange={(e) => { setPriority(e.target.value as PriorityLevel | ''); setPage(1) }}
-          className="w-36"
-        />
-      </FilterBar>
+      {/* Summary metrics */}
+      {stats && (
+        <div className="grid grid-cols-2 gap-3 mb-6 sm:grid-cols-3 lg:grid-cols-5">
+          <MetricCard label="Total leads" value={stats.total} />
+          <MetricCard label="New" value={stats.new} accent="bg-status-new" />
+          <MetricCard label="Qualified" value={stats.qualified} accent="bg-status-qualified" />
+          <MetricCard label="Converted" value={stats.converted} accent="bg-status-converted" />
+          <MetricCard label="Disqualified" value={stats.disqualified} accent="bg-status-disqualified" />
+        </div>
+      )}
 
+      {/* Filter panel */}
+      <div className="rounded-2xl bg-white/50 border border-white/70 px-4 py-3 mb-5 backdrop-blur-sm">
+        <div className="flex flex-wrap items-center gap-3">
+          <SearchInput
+            value={search}
+            onChange={(v) => { setSearch(v); setPage(1) }}
+            placeholder="Search leads by name or email..."
+            className="w-64"
+          />
+          <div className="h-5 w-px bg-border/60 hidden sm:block" />
+          <Select
+            options={[
+              { value: '', label: 'All statuses' },
+              { value: 'new', label: 'New' },
+              { value: 'nurturing', label: 'Nurturing' },
+              { value: 'qualified', label: 'Qualified' },
+              { value: 'disqualified', label: 'Disqualified' },
+              { value: 'converted', label: 'Converted' },
+            ]}
+            value={status}
+            onChange={(e) => { setStatus(e.target.value as LeadStatus | ''); setPage(1) }}
+            className="w-36"
+          />
+          <Select
+            options={[
+              { value: '', label: 'All sources' },
+              { value: 'marketing', label: 'Marketing' },
+              { value: 'university', label: 'University' },
+              { value: 'referral', label: 'Referral' },
+              { value: 'whatsapp', label: 'WhatsApp' },
+              { value: 'ads', label: 'Ads' },
+              { value: 'manual', label: 'Manual' },
+            ]}
+            value={source}
+            onChange={(e) => { setSource(e.target.value as LeadSource | ''); setPage(1) }}
+            className="w-36"
+          />
+          <Select
+            options={[
+              { value: '', label: 'All priorities' },
+              { value: 'p1', label: 'P1 — High' },
+              { value: 'p2', label: 'P2 — Medium' },
+              { value: 'p3', label: 'P3 — Low' },
+            ]}
+            value={priority}
+            onChange={(e) => { setPriority(e.target.value as PriorityLevel | ''); setPage(1) }}
+            className="w-36"
+          />
+          {hasFilters && (
+            <button
+              onClick={clearFilters}
+              className="ml-auto text-xs font-medium text-primary-600 hover:text-primary-700 transition-colors"
+            >
+              Clear filters
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Data table */}
       {isLoading ? (
         <div className="flex items-center justify-center py-20">
           <LoadingSpinner size="lg" />
         </div>
       ) : !data?.items.length ? (
-        <EmptyState
-          title="No leads found"
-          description={search || status || source || priority
-            ? 'Try adjusting your filters.'
-            : 'Leads will appear here once they start coming in.'}
-          icon={
-            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-              <rect x="6" y="6" width="36" height="36" rx="8" stroke="currentColor" strokeWidth="2" />
-              <path d="M18 24h12M24 18v12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-            </svg>
-          }
-        />
+        <div className="rounded-2xl bg-white/50 border border-white/70 backdrop-blur-sm">
+          <EmptyState
+            title="No leads found"
+            description={hasFilters
+              ? 'No leads match your current filters. Try broadening your search.'
+              : 'Leads will appear here as they come in from your marketing channels, referrals, and manual imports.'}
+            icon={
+              <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                <rect x="6" y="6" width="36" height="36" rx="8" stroke="currentColor" strokeWidth="2" />
+                <path d="M18 24h12M24 18v12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+            }
+          />
+        </div>
       ) : (
         <>
           <div className="bg-surface-raised rounded-xl border border-border overflow-hidden">
@@ -214,6 +246,18 @@ export default function LeadsPage() {
           />
         </>
       )}
+    </div>
+  )
+}
+
+function MetricCard({ label, value, accent }: { label: string; value: number; accent?: string }) {
+  return (
+    <div className="rounded-2xl bg-white/60 border border-white/80 px-4 py-3.5 backdrop-blur-sm">
+      <div className="flex items-center gap-2 mb-1">
+        {accent && <span className={`h-2 w-2 rounded-full ${accent}`} />}
+        <p className="text-[11px] font-medium text-text-muted uppercase tracking-wider">{label}</p>
+      </div>
+      <p className="text-2xl font-bold font-display text-text-primary tracking-tight">{value}</p>
     </div>
   )
 }

@@ -9,10 +9,11 @@ import { useAuth } from '@/providers/auth-provider'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { AuthShell } from '@/components/marketing/auth-shell'
+import api from '@/lib/api/client'
 
 export default function LoginPage() {
   const router = useRouter()
-  const { user, loading, authError, signOut } = useAuth()
+  const { user, firebaseUser, loading, authError, signOut, refreshUser } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -74,6 +75,49 @@ export default function LoginPage() {
     setError('')
   }
 
+  async function handleCompleteStudentRegistration() {
+    if (!firebaseUser) return
+
+    setError('')
+    setSubmitting(true)
+
+    try {
+      const displayName = firebaseUser.displayName?.trim() ?? ''
+      const [firstName = '', ...rest] = displayName.split(/\s+/).filter(Boolean)
+      const lastName = rest.join(' ')
+
+      await api.post('/auth/register', {
+        firstName: firstName || undefined,
+        lastName: lastName || undefined,
+      })
+
+      const appUser = await refreshUser()
+      if (!appUser) {
+        setError('Unable to complete registration. Please try again.')
+        return
+      }
+
+      router.replace(appUser.role === 'student' ? '/portal' : '/dashboard')
+    } catch (err: unknown) {
+      const apiError = err as { code?: string }
+
+      if (apiError?.code === 'USE_ACCEPT_INVITE') {
+        setError('This email belongs to an invited team member. Use your invitation link instead.')
+      } else if (apiError?.code === 'USE_VERIFY') {
+        const appUser = await refreshUser()
+        if (appUser) {
+          router.replace(appUser.role === 'student' ? '/portal' : '/dashboard')
+          return
+        }
+        setError('An account already exists. Try signing in again.')
+      } else {
+        setError('Unable to complete registration. Please try again.')
+      }
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
   return (
     <AuthShell
       eyebrow="Sign in"
@@ -102,9 +146,19 @@ export default function LoginPage() {
               <div className="mt-3 space-y-1 text-xs">
                 <p>
                   Student?{' '}
-                  <Link href="/auth/register" className="font-medium underline hover:no-underline">
-                    Create a student account
-                  </Link>
+                  {firebaseUser ? (
+                    <button
+                      type="button"
+                      onClick={handleCompleteStudentRegistration}
+                      className="font-medium underline hover:no-underline"
+                    >
+                      Complete student registration
+                    </button>
+                  ) : (
+                    <Link href="/auth/register" className="font-medium underline hover:no-underline">
+                      Create a student account
+                    </Link>
+                  )}
                 </p>
                 <p>Team member? Ask your admin for an invitation link.</p>
               </div>

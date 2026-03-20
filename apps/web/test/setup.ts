@@ -35,6 +35,7 @@ vi.mock('@/lib/auth/firebase', () => ({
   auth: null,
   onAuthStateChanged: vi.fn(),
   signOut: vi.fn(),
+  deleteCurrentUser: vi.fn(),
   getIdToken: vi.fn().mockResolvedValue('mock-token'),
   signInWithGoogle: vi.fn(),
   signInWithEmail: vi.fn(),

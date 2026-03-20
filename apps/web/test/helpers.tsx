@@ -2,38 +2,48 @@ import { render, type RenderOptions } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { type ReactNode } from 'react'
 import type { AppUser, AuthErrorCode } from '@/providers/auth-provider'
+import type { FirebaseUser } from '@/lib/auth/firebase'
 
 // ─── Auth context mock ──────────────────────────────────────────
 // We mock the AuthProvider module so we can inject user state directly.
 
 let _mockUser: AppUser | null = null
+let _mockFirebaseUser: FirebaseUser | null = null
 let _mockLoading = false
 let _mockAuthError: AuthErrorCode = null
 const _mockSignOut = vi.fn()
+const _mockRefreshUser = vi.fn()
 
 vi.mock('@/providers/auth-provider', () => ({
   AuthProvider: ({ children }: { children: ReactNode }) => children,
   useAuth: () => ({
     user: _mockUser,
-    firebaseUser: null,
+    firebaseUser: _mockFirebaseUser,
     loading: _mockLoading,
     authError: _mockAuthError,
     signOut: _mockSignOut,
+    refreshUser: _mockRefreshUser,
   }),
 }))
 
 export function setMockAuth(opts: {
   user?: AppUser | null
+  firebaseUser?: FirebaseUser | null
   loading?: boolean
   authError?: AuthErrorCode
 }) {
   _mockUser = opts.user ?? null
+  _mockFirebaseUser = opts.firebaseUser ?? null
   _mockLoading = opts.loading ?? false
   _mockAuthError = opts.authError ?? null
 }
 
 export function getMockSignOut() {
   return _mockSignOut
+}
+
+export function getMockRefreshUser() {
+  return _mockRefreshUser
 }
 
 // ─── Factories ──────────────────────────────────────────────────
