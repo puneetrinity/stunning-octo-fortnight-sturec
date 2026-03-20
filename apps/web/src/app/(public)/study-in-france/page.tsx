@@ -71,7 +71,7 @@ export default function StudyInFrancePage() {
         }
       />
 
-      <section className="py-12 sm:py-18">
+      <section className="py-10 sm:py-14">
         <div className="public-shell">
           <SectionHeading
             label="Why students choose it"
@@ -79,7 +79,7 @@ export default function StudyInFrancePage() {
             description="The strongest cases for France usually combine academic fit, realistic affordability, and a long-term mobility strategy."
             align="center"
           />
-          <div className="mt-12 grid gap-5 lg:grid-cols-2">
+          <div className="mt-8 grid items-start gap-4 lg:grid-cols-2">
             {reasons.map((reason, index) => (
               <EditorialCard key={reason.title} title={reason.title} tone={index % 2 === 0 ? 'light' : 'tinted'}>
                 <p>{reason.description}</p>
@@ -89,7 +89,7 @@ export default function StudyInFrancePage() {
         </div>
       </section>
 
-      <section className="py-10 sm:py-14">
+      <section className="py-8 sm:py-10">
         <div className="public-shell">
           <div className="grid gap-5 md:grid-cols-2">
             <div className="overflow-hidden rounded-[28px] shadow-[0_20px_60px_rgba(10,22,41,0.08)]">

@@ -42,7 +42,7 @@ export default function ContactPage() {
         }
       />
 
-      <section className="py-12 sm:py-18">
+      <section className="py-10 sm:py-14">
         <div className="public-shell">
           <SectionHeading
             label="Channels"
@@ -50,11 +50,11 @@ export default function ContactPage() {
             description="We route questions more effectively when the context is clear from the start."
             align="center"
           />
-          <div className="mt-12 grid gap-5 lg:grid-cols-3">
+          <div className="mt-8 grid items-start gap-4 lg:grid-cols-3">
             {channels.map((channel, index) => (
               <EditorialCard key={channel.title} title={channel.title} tone={index === 1 ? 'tinted' : 'light'}>
                 <p>{channel.description}</p>
-                <p className="mt-4 text-sm font-semibold text-[var(--color-public-teal)]">{channel.detail}</p>
+                <p className="mt-3 text-sm font-semibold text-[var(--color-public-teal)]">{channel.detail}</p>
               </EditorialCard>
             ))}
           </div>

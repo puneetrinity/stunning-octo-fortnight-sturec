@@ -57,14 +57,14 @@ export default function VisaPage() {
         }
       />
 
-      <section className="py-12 sm:py-18">
+      <section className="py-10 sm:py-14">
         <div className="public-shell">
           <SectionHeading
             label="Flow"
             title="Think in four layers."
             description="Most visa mistakes happen because the student is rushing to solve everything at once. A layered process is easier to manage and easier to verify."
           />
-          <div className="mt-12 grid gap-5 md:grid-cols-2">
+          <div className="mt-8 grid items-start gap-4 md:grid-cols-2">
             {steps.map((step, index) => (
               <EditorialCard key={step.title} title={step.title} tone={index === 2 ? 'dark' : 'light'}>
                 <p>{step.description}</p>

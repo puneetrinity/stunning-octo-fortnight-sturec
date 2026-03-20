@@ -114,20 +114,20 @@ body {
   gap: 0.5rem;
   border-radius: 9999px;
   background: rgba(255, 255, 255, 0.78);
-  padding: 0.7rem 1rem;
-  font-size: 0.7rem;
+  padding: 0.45rem 0.85rem;
+  font-size: 0.65rem;
   font-weight: 700;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--color-public-teal);
-  box-shadow: 0 14px 40px rgba(10, 22, 41, 0.06);
+  box-shadow: 0 10px 30px rgba(10, 22, 41, 0.05);
 }
 
 .public-panel {
-  border-radius: 28px;
+  border-radius: 20px;
   background: rgba(255, 255, 255, 0.78);
   backdrop-filter: blur(16px);
-  box-shadow: 0 20px 60px rgba(10, 22, 41, 0.08);
+  box-shadow: 0 16px 48px rgba(10, 22, 41, 0.07);
 }
 
 .public-button-primary {
@@ -136,11 +136,11 @@ body {
   justify-content: center;
   border-radius: 9999px;
   background: linear-gradient(140deg, var(--color-public-teal), #0f857d);
-  padding: 0.9rem 1.4rem;
-  font-size: 0.92rem;
+  padding: 0.7rem 1.3rem;
+  font-size: 0.85rem;
   font-weight: 700;
   color: white;
-  box-shadow: 0 18px 34px rgba(0, 106, 98, 0.24);
+  box-shadow: 0 14px 28px rgba(0, 106, 98, 0.22);
   transition:
     transform 160ms ease,
     box-shadow 160ms ease,
@@ -158,11 +158,11 @@ body {
   justify-content: center;
   border-radius: 9999px;
   background: rgba(255, 255, 255, 0.8);
-  padding: 0.9rem 1.4rem;
-  font-size: 0.92rem;
+  padding: 0.7rem 1.3rem;
+  font-size: 0.85rem;
   font-weight: 700;
   color: var(--color-public-navy);
-  box-shadow: 0 12px 32px rgba(10, 22, 41, 0.06);
+  box-shadow: 0 10px 26px rgba(10, 22, 41, 0.06);
   transition:
     transform 160ms ease,
     background-color 160ms ease;

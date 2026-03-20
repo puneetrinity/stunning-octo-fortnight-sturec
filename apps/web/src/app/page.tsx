@@ -128,7 +128,7 @@ export default function HomePage() {
 
       <MetricStrip items={metrics} />
 
-      <section className="py-12 sm:py-18">
+      <section className="py-10 sm:py-14">
         <div className="public-shell">
           <SectionHeading
             label="How we help"
@@ -136,7 +136,7 @@ export default function HomePage() {
             description="Students come to us with real questions about cost, eligibility, timelines, and next steps. We answer them plainly, with process and tradeoffs included."
             align="center"
           />
-          <div className="mt-12 grid gap-5 lg:grid-cols-3">
+          <div className="mt-8 grid items-start gap-4 lg:grid-cols-3">
             {pillars.map((pillar, index) => (
               <EditorialCard
                 key={pillar.title}
@@ -150,9 +150,9 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="py-10 sm:py-14">
+      <section className="py-8 sm:py-10">
         <div className="public-shell">
-          <div className="overflow-hidden rounded-[28px] shadow-[0_20px_60px_rgba(10,22,41,0.08)]">
+          <div className="overflow-hidden rounded-[24px] shadow-[0_20px_60px_rgba(10,22,41,0.08)]">
             <Image
               src="/images/hero-rooftops.webp"
               alt="Paris rooftops at golden hour seen from a university window"
@@ -164,23 +164,23 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="py-10 sm:py-18">
-        <div className="public-shell grid gap-10 lg:grid-cols-[minmax(0,0.9fr)_1.1fr] lg:items-start">
+      <section className="py-10 sm:py-14">
+        <div className="public-shell grid gap-8 lg:grid-cols-[minmax(0,0.9fr)_1.1fr] lg:items-start">
           <SectionHeading
             label="Your journey"
             title="Built around a real student timeline."
             description="From first enquiry to arrival in France, the process follows five clear phases. Each one builds on the last so nothing falls through the cracks."
           />
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-3 md:grid-cols-2">
             {journey.map((item, index) => (
-              <div key={item.title} className={`public-panel p-6${index === journey.length - 1 && journey.length % 2 !== 0 ? ' md:col-span-2' : ''}`}>
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-public-burgundy)]">
+              <div key={item.title} className={`public-panel p-5${index === journey.length - 1 && journey.length % 2 !== 0 ? ' md:col-span-2' : ''}`}>
+                <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--color-public-burgundy)]">
                   Phase {index + 1}
                 </p>
-                <h3 className="mt-3 text-2xl font-semibold tracking-[-0.03em] text-[var(--color-public-navy)]">
+                <h3 className="mt-1.5 text-lg font-semibold tracking-[-0.02em] text-[var(--color-public-navy)]">
                   {item.title}
                 </h3>
-                <p className="mt-3 text-sm leading-7 text-[color:var(--color-public-slate)]">
+                <p className="mt-2 text-sm leading-7 text-[color:var(--color-public-slate)]">
                   {item.description}
                 </p>
               </div>
@@ -189,9 +189,9 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="py-10 sm:py-18">
-        <div className="public-shell grid gap-8 lg:grid-cols-[minmax(0,1fr)_380px]">
-          <div className="grid gap-5 md:grid-cols-3">
+      <section className="py-10 sm:py-14">
+        <div className="public-shell grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
+          <div className="grid items-start gap-4 md:grid-cols-3">
             {franceAngles.map((angle) => (
               <EditorialCard key={angle.title} title={angle.title} tone="tinted">
                 <p>{angle.description}</p>

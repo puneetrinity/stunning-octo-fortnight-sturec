@@ -60,7 +60,7 @@ export default function ChatPage() {
         }
       />
 
-      <section className="py-12 sm:py-18">
+      <section className="py-10 sm:py-14">
         <div className="public-shell">
           <SectionHeading
             label="Capabilities"
@@ -68,7 +68,7 @@ export default function ChatPage() {
             description="The advisor is strongest when it helps a student orient themselves, narrow the search space, and prepare better questions for the human team."
             align="center"
           />
-          <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-8 grid items-start gap-4 md:grid-cols-2 lg:grid-cols-3">
             {capabilities.map((capability, index) => (
               <EditorialCard key={capability} title={`0${index + 1}`} tone={index === 2 ? 'dark' : 'light'}>
                 <p>{capability}</p>

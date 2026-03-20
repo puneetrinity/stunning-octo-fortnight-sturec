@@ -64,7 +64,7 @@ export default function AboutPage() {
         }
       />
 
-      <section className="py-12 sm:py-18">
+      <section className="py-10 sm:py-14">
         <div className="public-shell">
           <SectionHeading
             label="Principles"
@@ -72,7 +72,7 @@ export default function AboutPage() {
             description="Everything on the site should make a student feel more oriented, not more overwhelmed."
             align="center"
           />
-          <div className="mt-12 grid gap-5 lg:grid-cols-3">
+          <div className="mt-8 grid items-start gap-4 lg:grid-cols-3">
             {principles.map((principle) => (
               <EditorialCard key={principle.title} title={principle.title} tone="light">
                 <p>{principle.description}</p>
