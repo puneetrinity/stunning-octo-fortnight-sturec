@@ -1,3 +1,5 @@
+import Image from 'next/image'
+
 import { EditorialCard, MarketingHero, MarketingCTA, SectionHeading } from '@/components/marketing/sections'
 
 const channels = [
@@ -33,6 +35,11 @@ export default function ContactPage() {
           { href: '/book', label: 'Book a consultation', variant: 'secondary' },
         ]}
         aside={
+          <div className="overflow-hidden rounded-[24px] shadow-[0_20px_60px_rgba(10,22,41,0.08)]">
+            <Image src="/images/hero-contact.webp" alt="Education counsellor on a video call with a student" width={1600} height={900} className="aspect-[4/3] w-full object-cover" />
+          </div>
+        }
+        footer={
           <EditorialCard title="Good first message" tone="dark">
             <p>
               Include your current study level, intended intake, target degree, preferred city if
@@ -50,7 +57,7 @@ export default function ContactPage() {
             description="We route questions more effectively when the context is clear from the start."
             align="center"
           />
-          <div className="mt-8 grid items-start gap-4 lg:grid-cols-3">
+          <div className="mt-8 grid gap-4 lg:grid-cols-3">
             {channels.map((channel, index) => (
               <EditorialCard key={channel.title} title={channel.title} tone={index === 1 ? 'tinted' : 'light'}>
                 <p>{channel.description}</p>

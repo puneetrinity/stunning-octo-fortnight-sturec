@@ -1,3 +1,5 @@
+import Image from 'next/image'
+
 import { EditorialCard, MarketingCTA, MarketingHero, SectionHeading } from '@/components/marketing/sections'
 
 const steps = [
@@ -44,6 +46,11 @@ export default function VisaPage() {
           { href: '/book', label: 'Book a consultation', variant: 'secondary' },
         ]}
         aside={
+          <div className="overflow-hidden rounded-[24px] shadow-[0_20px_60px_rgba(10,22,41,0.08)]">
+            <Image src="/images/hero-visa.webp" alt="Student organizing visa documents and passport on desk" width={1600} height={900} className="aspect-[4/3] w-full object-cover" />
+          </div>
+        }
+        footer={
           <EditorialCard title="Common document stack" tone="tinted">
             <div className="space-y-3">
               {documents.map((document) => (

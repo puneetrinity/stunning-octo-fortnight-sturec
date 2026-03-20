@@ -2,6 +2,8 @@
 
 import Link from 'next/link'
 
+import Image from 'next/image'
+
 import { EditorialCard, MarketingHero, SectionHeading } from '@/components/marketing/sections'
 import { useAuth } from '@/providers/auth-provider'
 
@@ -47,6 +49,11 @@ export default function ChatPage() {
           { href: '/auth/login', label: 'Sign in', variant: 'secondary' },
         ]}
         aside={
+          <div className="overflow-hidden rounded-[24px] shadow-[0_20px_60px_rgba(10,22,41,0.08)]">
+            <Image src="/images/hero-chat.webp" alt="Student chatting with AI advisor on laptop in café" width={1600} height={900} className="aspect-[4/3] w-full object-cover" />
+          </div>
+        }
+        footer={
           <EditorialCard title="Best used for" tone="tinted">
             <div className="space-y-3">
               {capabilities.slice(0, 4).map((item) => (

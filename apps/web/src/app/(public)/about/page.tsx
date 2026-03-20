@@ -86,12 +86,12 @@ export default function AboutPage() {
         <div className="public-shell">
           <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_340px]">
             <EditorialCard title="How we work" tone="tinted">
-              <p className="text-base leading-8 text-[color:var(--color-public-slate)]">
-                Students can begin in whichever mode suits them best: reading guides, exploring the
-                catalog, booking a consultation, or starting with the AI advisor. From there, we
-                help them move into a structured support environment where counsellors and
-                technology work together to keep the process on track.
-              </p>
+              <ul className="space-y-2 text-base leading-8 text-[color:var(--color-public-slate)]">
+                <li className="flex gap-3"><span className="mt-2.5 h-2 w-2 shrink-0 rounded-full bg-[var(--color-public-teal)]" />Start however suits you: guides, catalog, AI advisor, or a counsellor booking</li>
+                <li className="flex gap-3"><span className="mt-2.5 h-2 w-2 shrink-0 rounded-full bg-[var(--color-public-teal)]" />Move into structured support where counsellors and technology work together</li>
+                <li className="flex gap-3"><span className="mt-2.5 h-2 w-2 shrink-0 rounded-full bg-[var(--color-public-teal)]" />Track documents, deadlines, and next steps in one place</li>
+                <li className="flex gap-3"><span className="mt-2.5 h-2 w-2 shrink-0 rounded-full bg-[var(--color-public-teal)]" />Stay on track from first enquiry through to arrival in France</li>
+              </ul>
             </EditorialCard>
             <div className="overflow-hidden rounded-[24px] shadow-[0_20px_60px_rgba(10,22,41,0.08)]">
               <Image

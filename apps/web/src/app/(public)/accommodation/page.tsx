@@ -1,3 +1,5 @@
+import Image from 'next/image'
+
 import { EditorialCard, MarketingCTA, MarketingHero, SectionHeading } from '@/components/marketing/sections'
 
 const options = [
@@ -41,6 +43,11 @@ export default function AccommodationPage() {
           { href: '/book', label: 'Discuss with a counsellor', variant: 'secondary' },
         ]}
         aside={
+          <div className="overflow-hidden rounded-[24px] shadow-[0_20px_60px_rgba(10,22,41,0.08)]">
+            <Image src="/images/hero-accommodation.webp" alt="Student filling forms in a French dorm room" width={1600} height={900} className="aspect-[4/3] w-full object-cover" />
+          </div>
+        }
+        footer={
           <EditorialCard title="What to keep in mind" tone="dark">
             <div className="space-y-3">
               {housingSignals.map((signal) => (
