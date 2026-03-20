@@ -131,8 +131,7 @@ async function dispatch(
 }
 
 /**
- * Email dispatch via SendGrid or similar.
- * Placeholder — will be wired to actual email integration.
+ * Email dispatch via SendGrid or a compatible transactional email provider.
  */
 async function sendEmail(
   to: string,
@@ -172,8 +171,7 @@ async function sendEmail(
 }
 
 /**
- * WhatsApp dispatch via Sensy.ai or WhatsApp Business API.
- * Placeholder — will be wired to actual WhatsApp integration.
+ * WhatsApp dispatch via Sensy.ai or a compatible WhatsApp Business API.
  */
 async function sendWhatsApp(
   to: string,
