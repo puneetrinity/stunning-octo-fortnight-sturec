@@ -39,28 +39,28 @@ export default function AboutPage() {
           { href: '/contact', label: 'Talk to us', variant: 'secondary' },
         ]}
         aside={
-          <div className="grid gap-4">
-            <div className="overflow-hidden rounded-[28px] shadow-[0_20px_60px_rgba(10,22,41,0.08)]">
-              <Image
-                src="/images/about-counsellor.webp"
-                alt="Education counsellor reviewing documents with a student"
-                width={1600}
-                height={900}
-                className="h-auto w-full object-cover"
-                priority
-              />
-            </div>
-            <EditorialCard title="What we offer" tone="dark">
-              <div className="space-y-3">
-                {whatWeOffer.map((item) => (
-                  <div key={item} className="flex items-start gap-3">
-                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-white/75" />
-                    <p>{item}</p>
-                  </div>
-                ))}
-              </div>
-            </EditorialCard>
+          <div className="overflow-hidden rounded-[24px] shadow-[0_20px_60px_rgba(10,22,41,0.08)]">
+            <Image
+              src="/images/about-counsellor.webp"
+              alt="Education counsellor reviewing documents with a student"
+              width={1600}
+              height={900}
+              className="aspect-[4/3] w-full object-cover"
+              priority
+            />
           </div>
+        }
+        footer={
+          <EditorialCard title="What we offer" tone="dark">
+            <div className="space-y-2">
+              {whatWeOffer.map((item) => (
+                <div key={item} className="flex items-start gap-3">
+                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-white/75" />
+                  <p>{item}</p>
+                </div>
+              ))}
+            </div>
+          </EditorialCard>
         }
       />
 
@@ -72,7 +72,7 @@ export default function AboutPage() {
             description="Everything on the site should make a student feel more oriented, not more overwhelmed."
             align="center"
           />
-          <div className="mt-8 grid items-start gap-4 lg:grid-cols-3">
+          <div className="mt-8 grid gap-4 lg:grid-cols-3">
             {principles.map((principle) => (
               <EditorialCard key={principle.title} title={principle.title} tone="light">
                 <p>{principle.description}</p>
@@ -82,9 +82,9 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="pb-8 pt-4 sm:pb-14">
+      <section className="py-6 sm:py-10">
         <div className="public-shell">
-          <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-center">
+          <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_340px]">
             <EditorialCard title="How we work" tone="tinted">
               <p className="text-base leading-8 text-[color:var(--color-public-slate)]">
                 Students can begin in whichever mode suits them best: reading guides, exploring the
@@ -93,13 +93,13 @@ export default function AboutPage() {
                 technology work together to keep the process on track.
               </p>
             </EditorialCard>
-            <div className="overflow-hidden rounded-[28px] shadow-[0_20px_60px_rgba(10,22,41,0.08)]">
+            <div className="overflow-hidden rounded-[24px] shadow-[0_20px_60px_rgba(10,22,41,0.08)]">
               <Image
                 src="/images/about-brochure.webp"
                 alt="Reviewing a university program brochure"
                 width={1600}
                 height={900}
-                className="h-auto w-full object-cover"
+                className="aspect-[4/3] w-full object-cover"
               />
             </div>
           </div>

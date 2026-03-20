@@ -43,19 +43,21 @@ export default function StudyInFrancePage() {
           { href: '/apply', label: 'Build my plan', variant: 'secondary' },
         ]}
         aside={
-          <div className="grid gap-4">
-            <div className="overflow-hidden rounded-[28px] shadow-[0_20px_60px_rgba(10,22,41,0.08)]">
-              <Image
-                src="/images/france-seine.webp"
-                alt="Student reading by the Seine river in Paris at golden hour"
-                width={1600}
-                height={900}
-                className="h-auto w-full object-cover"
-                priority
-              />
-            </div>
+          <div className="overflow-hidden rounded-[24px] shadow-[0_20px_60px_rgba(10,22,41,0.08)]">
+            <Image
+              src="/images/france-seine.webp"
+              alt="Student reading by the Seine river in Paris at golden hour"
+              width={1600}
+              height={900}
+              className="aspect-[4/3] w-full object-cover"
+              priority
+            />
+          </div>
+        }
+        footer={
+          <div className="grid gap-4 md:grid-cols-2">
             <EditorialCard title="What to weigh early" tone="tinted">
-              <div className="space-y-3">
+              <div className="space-y-2">
                 {realityCheck.map((item) => (
                   <p key={item}>{item}</p>
                 ))}
@@ -79,7 +81,7 @@ export default function StudyInFrancePage() {
             description="The strongest cases for France usually combine academic fit, realistic affordability, and a long-term mobility strategy."
             align="center"
           />
-          <div className="mt-8 grid items-start gap-4 lg:grid-cols-2">
+          <div className="mt-8 grid gap-4 lg:grid-cols-2">
             {reasons.map((reason, index) => (
               <EditorialCard key={reason.title} title={reason.title} tone={index % 2 === 0 ? 'light' : 'tinted'}>
                 <p>{reason.description}</p>
@@ -89,10 +91,10 @@ export default function StudyInFrancePage() {
         </div>
       </section>
 
-      <section className="py-8 sm:py-10">
+      <section className="py-4 sm:py-6">
         <div className="public-shell">
           <div className="grid gap-5 md:grid-cols-2">
-            <div className="overflow-hidden rounded-[28px] shadow-[0_20px_60px_rgba(10,22,41,0.08)]">
+            <div className="overflow-hidden rounded-[24px] shadow-[0_20px_60px_rgba(10,22,41,0.08)]">
               <Image
                 src="/images/france-tram.webp"
                 alt="Tram passing through a sunlit square in a French city"
@@ -101,7 +103,7 @@ export default function StudyInFrancePage() {
                 className="aspect-[4/3] w-full object-cover"
               />
             </div>
-            <div className="overflow-hidden rounded-[28px] shadow-[0_20px_60px_rgba(10,22,41,0.08)]">
+            <div className="overflow-hidden rounded-[24px] shadow-[0_20px_60px_rgba(10,22,41,0.08)]">
               <Image
                 src="/images/france-boulangerie.webp"
                 alt="Student at a French boulangerie"

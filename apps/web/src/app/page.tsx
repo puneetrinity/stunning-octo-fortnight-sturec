@@ -94,19 +94,21 @@ export default function HomePage() {
         ]}
         caption="Designed around the real sequence of decisions international students face when choosing France."
         aside={
-          <div className="grid gap-4">
-            <div className="overflow-hidden rounded-[28px] shadow-[0_20px_60px_rgba(10,22,41,0.08)]">
-              <Image
-                src="/images/hero-cafe.webp"
-                alt="International student studying at an outdoor café in Paris"
-                width={1600}
-                height={900}
-                className="h-auto w-full object-cover"
-                priority
-              />
-            </div>
+          <div className="overflow-hidden rounded-[24px] shadow-[0_20px_60px_rgba(10,22,41,0.08)]">
+            <Image
+              src="/images/hero-cafe.webp"
+              alt="International student studying at an outdoor café in Paris"
+              width={1600}
+              height={900}
+              className="aspect-[4/3] w-full object-cover"
+              priority
+            />
+          </div>
+        }
+        footer={
+          <div className="grid gap-4 md:grid-cols-2">
             <EditorialCard title="What you get" tone="tinted">
-              <div className="space-y-3">
+              <div className="space-y-2">
                 {whatYouGet.map((point) => (
                   <div key={point} className="flex items-start gap-3">
                     <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-public-teal)]" />
@@ -136,7 +138,7 @@ export default function HomePage() {
             description="Students come to us with real questions about cost, eligibility, timelines, and next steps. We answer them plainly, with process and tradeoffs included."
             align="center"
           />
-          <div className="mt-8 grid items-start gap-4 lg:grid-cols-3">
+          <div className="mt-8 grid gap-4 lg:grid-cols-3">
             {pillars.map((pillar, index) => (
               <EditorialCard
                 key={pillar.title}
@@ -150,7 +152,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="py-8 sm:py-10">
+      <section className="py-4 sm:py-6">
         <div className="public-shell">
           <div className="overflow-hidden rounded-[24px] shadow-[0_20px_60px_rgba(10,22,41,0.08)]">
             <Image
@@ -190,16 +192,16 @@ export default function HomePage() {
       </section>
 
       <section className="py-10 sm:py-14">
-        <div className="public-shell grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
-          <div className="grid items-start gap-4 md:grid-cols-3">
+        <div className="public-shell">
+          <div className="grid gap-4 lg:grid-cols-3">
             {franceAngles.map((angle) => (
               <EditorialCard key={angle.title} title={angle.title} tone="tinted">
                 <p>{angle.description}</p>
               </EditorialCard>
             ))}
           </div>
-          <div className="grid gap-4">
-            <div className="overflow-hidden rounded-[28px] shadow-[0_20px_60px_rgba(10,22,41,0.08)]">
+          <div className="mt-4 grid gap-4 md:grid-cols-[minmax(0,1fr)_1fr]">
+            <div className="overflow-hidden rounded-[24px] shadow-[0_20px_60px_rgba(10,22,41,0.08)]">
               <Image
                 src="/images/hero-students.webp"
                 alt="International students walking through a French university campus"

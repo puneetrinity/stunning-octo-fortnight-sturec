@@ -64,7 +64,7 @@ export default function VisaPage() {
             title="Think in four layers."
             description="Most visa mistakes happen because the student is rushing to solve everything at once. A layered process is easier to manage and easier to verify."
           />
-          <div className="mt-8 grid items-start gap-4 md:grid-cols-2">
+          <div className="mt-8 grid gap-4 md:grid-cols-2">
             {steps.map((step, index) => (
               <EditorialCard key={step.title} title={step.title} tone={index === 2 ? 'dark' : 'light'}>
                 <p>{step.description}</p>

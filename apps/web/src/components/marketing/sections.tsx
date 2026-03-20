@@ -13,6 +13,7 @@ interface MarketingHeroProps {
   description: string
   actions?: HeroAction[]
   aside?: ReactNode
+  footer?: ReactNode
   caption?: string
 }
 
@@ -22,38 +23,43 @@ export function MarketingHero({
   description,
   actions = [],
   aside,
+  footer,
   caption,
 }: MarketingHeroProps) {
   return (
-    <section className="relative overflow-hidden">
-      <div className="public-shell grid gap-8 pb-10 pt-8 lg:grid-cols-[minmax(0,1.15fr)_400px] lg:items-start lg:gap-12 lg:pb-14 lg:pt-12">
-        <div className="relative z-10">
-          <span className="public-label">{label}</span>
-          <h1 className="mt-4 max-w-4xl text-4xl font-semibold leading-[0.96] tracking-[-0.04em] text-[var(--color-public-navy)] sm:text-5xl lg:text-6xl">
-            {title}
-          </h1>
-          <p className="mt-4 max-w-2xl text-base leading-7 text-[color:var(--color-public-slate)] sm:text-lg sm:leading-8">
-            {description}
-          </p>
-          {actions.length > 0 && (
-            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-              {actions.map((action) => (
-                <Link
-                  key={action.href}
-                  href={action.href}
-                  className={action.variant === 'secondary' ? 'public-button-secondary' : 'public-button-primary'}
-                >
-                  {action.label}
-                </Link>
-              ))}
-            </div>
-          )}
-          {caption && (
-            <p className="mt-4 text-sm leading-7 text-[color:var(--color-public-muted)]">{caption}</p>
-          )}
+    <section className="relative overflow-hidden py-8 sm:py-10">
+      <div className="public-shell">
+        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_480px] lg:items-start">
+          <div className="relative z-10">
+            <span className="public-label">{label}</span>
+            <h1 className="mt-4 max-w-4xl text-4xl font-semibold leading-[0.96] tracking-[-0.04em] text-[var(--color-public-navy)] sm:text-5xl lg:text-6xl">
+              {title}
+            </h1>
+            <p className="mt-4 max-w-2xl text-base leading-7 text-[color:var(--color-public-slate)] sm:text-lg sm:leading-8">
+              {description}
+            </p>
+            {actions.length > 0 && (
+              <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+                {actions.map((action) => (
+                  <Link
+                    key={action.href}
+                    href={action.href}
+                    className={action.variant === 'secondary' ? 'public-button-secondary' : 'public-button-primary'}
+                  >
+                    {action.label}
+                  </Link>
+                ))}
+              </div>
+            )}
+            {caption && (
+              <p className="mt-4 text-sm leading-7 text-[color:var(--color-public-muted)]">{caption}</p>
+            )}
+          </div>
+
+          <div className="relative z-10">{aside}</div>
         </div>
 
-        <div className="relative z-10">{aside}</div>
+        {footer && <div className="mt-6">{footer}</div>}
       </div>
     </section>
   )
@@ -65,7 +71,7 @@ export function MetricStrip({
   items: Array<{ value: string; label: string; note?: string }>
 }) {
   return (
-    <section className="pb-8">
+    <section className="py-6 sm:py-8">
       <div className="public-shell">
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
           {items.map((item) => (
@@ -153,7 +159,7 @@ export function MarketingCTA({
   secondary?: HeroAction
 }) {
   return (
-    <section className="py-14">
+    <section className="py-10 sm:py-14">
       <div className="public-shell">
         <div className="overflow-hidden rounded-[28px] bg-[linear-gradient(140deg,rgba(10,22,41,1),rgba(0,106,98,0.92),rgba(91,30,38,0.92))] px-7 py-8 text-white shadow-[0_28px_90px_rgba(10,22,41,0.28)] sm:px-10 sm:py-10">
           <span className="inline-flex rounded-full bg-white/12 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-white/78">

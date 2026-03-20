@@ -61,7 +61,7 @@ export default function CampusFrancePage() {
             title="A simpler way to think about Etudes en France."
             description="Students do better when the procedure is broken into clear operational stages instead of one intimidating block."
           />
-          <div className="mt-8 grid items-start gap-4 lg:grid-cols-2">
+          <div className="mt-8 grid gap-4 lg:grid-cols-2">
             {stages.map((stage, index) => (
               <EditorialCard key={stage.title} title={stage.title} tone={index === 1 ? 'dark' : 'light'}>
                 <p>{stage.description}</p>

@@ -62,7 +62,7 @@ export default function AccommodationPage() {
             description="Not every student should target the same kind of accommodation at the same moment."
             align="center"
           />
-          <div className="mt-8 grid items-start gap-4 lg:grid-cols-2">
+          <div className="mt-8 grid gap-4 lg:grid-cols-2">
             {options.map((option, index) => (
               <EditorialCard key={option.title} title={option.title} tone={index % 2 === 0 ? 'light' : 'tinted'}>
                 <p>{option.description}</p>
