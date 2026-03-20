@@ -241,19 +241,31 @@ function parseAiResponse(raw: string): {
   text: string
   structured: AiStructuredOutput | null
 } {
-  // Extract JSON block from ```json ... ```
-  const jsonMatch = raw.match(/```json\s*([\s\S]*?)```/)
+  // Try fenced ```json ... ``` first
+  const fencedMatch = raw.match(/```json\s*([\s\S]*?)```/)
   let structured: AiStructuredOutput | null = null
   let text = raw
 
-  if (jsonMatch) {
+  if (fencedMatch) {
     try {
-      structured = JSON.parse(jsonMatch[1].trim())
+      structured = JSON.parse(fencedMatch[1].trim())
     } catch {
       // If JSON parsing fails, keep structured as null
     }
-    // Remove JSON block from visible text
     text = raw.replace(/```json[\s\S]*?```/, '').trim()
+  }
+
+  // Fallback: find unfenced JSON block containing assessment fields
+  if (!structured) {
+    const unfencedMatch = raw.match(/(\{[\s\S]*?"profile_completeness"[\s\S]*?\})\s*(?:—\s*)?$/)
+    if (unfencedMatch) {
+      try {
+        structured = JSON.parse(unfencedMatch[1].trim())
+        text = raw.slice(0, unfencedMatch.index).replace(/\s*—\s*$/, '').trim()
+      } catch {
+        // Not valid JSON, leave as-is
+      }
+    }
   }
 
   return { text, structured }
