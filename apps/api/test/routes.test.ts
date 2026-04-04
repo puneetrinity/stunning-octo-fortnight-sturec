@@ -939,6 +939,107 @@ describe('Route-level smoke tests', () => {
 
       expect(response.statusCode).toBe(403)
     })
+
+    it('POST /students/:id/campaigns/:campaignId/pause pauses campaign', async () => {
+      authAs(COUNSELLOR_USER)
+      db.studentCampaign.findUnique.mockResolvedValue({
+        id: '00000000-0000-0000-0000-0000000000c1',
+        studentId: '00000000-0000-0000-0000-000000000010',
+        status: 'active',
+      })
+      db.studentCampaign.update.mockResolvedValue({
+        id: '00000000-0000-0000-0000-0000000000c1',
+        status: 'paused',
+        pausedAt: new Date(),
+      })
+
+      const response = await app.inject({
+        method: 'POST',
+        url: '/api/v1/students/00000000-0000-0000-0000-000000000010/campaigns/00000000-0000-0000-0000-0000000000c1/pause',
+        headers: authHeaders(),
+      })
+
+      expect(response.statusCode).toBe(200)
+      expect(JSON.parse(response.body).status).toBe('paused')
+    })
+
+    it('POST /students/:id/campaigns/:campaignId/resume resumes campaign', async () => {
+      authAs(COUNSELLOR_USER)
+      db.studentCampaign.findUnique.mockResolvedValue({
+        id: '00000000-0000-0000-0000-0000000000c1',
+        studentId: '00000000-0000-0000-0000-000000000010',
+        status: 'paused',
+      })
+      db.studentCampaign.update.mockResolvedValue({
+        id: '00000000-0000-0000-0000-0000000000c1',
+        status: 'active',
+      })
+
+      const response = await app.inject({
+        method: 'POST',
+        url: '/api/v1/students/00000000-0000-0000-0000-000000000010/campaigns/00000000-0000-0000-0000-0000000000c1/resume',
+        headers: authHeaders(),
+      })
+
+      expect(response.statusCode).toBe(200)
+      expect(JSON.parse(response.body).status).toBe('active')
+    })
+
+    it('PATCH /students/:id/campaigns/:campaignId/mode updates mode', async () => {
+      authAs(COUNSELLOR_USER)
+      db.studentCampaign.findUnique.mockResolvedValue({
+        id: '00000000-0000-0000-0000-0000000000c1',
+        studentId: '00000000-0000-0000-0000-000000000010',
+        status: 'active',
+        mode: 'manual',
+        steps: [],
+        pack: {},
+      })
+      db.studentCampaign.update.mockResolvedValue({
+        id: '00000000-0000-0000-0000-0000000000c1',
+        mode: 'automated',
+      })
+
+      const response = await app.inject({
+        method: 'PATCH',
+        url: '/api/v1/students/00000000-0000-0000-0000-000000000010/campaigns/00000000-0000-0000-0000-0000000000c1/mode',
+        headers: authHeaders(),
+        payload: { mode: 'automated' },
+      })
+
+      expect(response.statusCode).toBe(200)
+    })
+
+    it('GET /students/:id/campaign-history returns history', async () => {
+      authAs(COUNSELLOR_USER)
+      db.notificationLog.findMany.mockResolvedValue([])
+
+      const response = await app.inject({
+        method: 'GET',
+        url: '/api/v1/students/00000000-0000-0000-0000-000000000010/campaign-history',
+        headers: authHeaders(),
+      })
+
+      expect(response.statusCode).toBe(200)
+      expect(JSON.parse(response.body)).toEqual([])
+    })
+
+    it('pause returns 404 for wrong studentId', async () => {
+      authAs(COUNSELLOR_USER)
+      db.studentCampaign.findUnique.mockResolvedValue({
+        id: '00000000-0000-0000-0000-0000000000c1',
+        studentId: '00000000-0000-0000-0000-999999999999',
+        status: 'active',
+      })
+
+      const response = await app.inject({
+        method: 'POST',
+        url: '/api/v1/students/00000000-0000-0000-0000-000000000010/campaigns/00000000-0000-0000-0000-0000000000c1/pause',
+        headers: authHeaders(),
+      })
+
+      expect(response.statusCode).toBe(404)
+    })
   })
 
   // ─── Counsellor ────────────────────────────────────────────

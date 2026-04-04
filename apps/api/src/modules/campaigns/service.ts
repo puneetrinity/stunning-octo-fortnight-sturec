@@ -57,9 +57,9 @@ export async function sendStep(stepId: string, studentId: string) {
   return executeStep(step)
 }
 
-export async function sendAllDue(campaignId: string) {
+export async function sendAllDue(campaignId: string, studentId: string) {
   const campaign = await repo.findStudentCampaignById(campaignId)
-  if (!campaign) return null
+  if (!campaign || campaign.studentId !== studentId) return null
 
   const pendingSteps = campaign.steps.filter(
     (s) => s.status === 'pending' || s.status === 'scheduled',
@@ -86,22 +86,28 @@ export async function sendAllDue(campaignId: string) {
   return results
 }
 
-export async function pauseCampaign(campaignId: string) {
+export async function pauseCampaign(campaignId: string, studentId: string) {
+  const campaign = await repo.findStudentCampaignById(campaignId)
+  if (!campaign || campaign.studentId !== studentId) return null
+
   return repo.updateStudentCampaign(campaignId, {
     status: 'paused',
     pausedAt: new Date(),
   })
 }
 
-export async function resumeCampaign(campaignId: string) {
+export async function resumeCampaign(campaignId: string, studentId: string) {
+  const campaign = await repo.findStudentCampaignById(campaignId)
+  if (!campaign || campaign.studentId !== studentId) return null
+
   return repo.updateStudentCampaign(campaignId, {
     status: 'active',
   })
 }
 
-export async function updateCampaignMode(campaignId: string, mode: string) {
+export async function updateCampaignMode(campaignId: string, mode: string, studentId: string) {
   const campaign = await repo.findStudentCampaignById(campaignId)
-  if (!campaign) return null
+  if (!campaign || campaign.studentId !== studentId) return null
 
   await repo.updateStudentCampaign(campaignId, { mode })
 
@@ -158,18 +164,20 @@ async function executeStep(step: {
   const studentId = step.studentCampaign.studentId
 
   if (template.deliveryMode === 'mautic_campaign_trigger' && template.mauticCampaignId) {
-    // Mautic-backed delivery
+    // Mautic-backed delivery — use the real numeric campaign ID
     getMauticSyncQueue().add('campaign-trigger', {
       entityType: 'student',
       entityId: studentId,
       eventType: 'campaign_triggered',
-      triggeringActionId: step.id,
+      triggeringActionId: String(template.mauticCampaignId),
     }).catch((err) => console.error('[campaigns] Mautic trigger failed:', err))
 
     await repo.updateStepStatus(step.id, { status: 'sent', sentAt: new Date() })
   } else {
     // Direct delivery via notification worker
-    const job = await getNotificationsQueue().add('campaign-step', {
+    // Use a deterministic job name so we can find the notification log entry later
+    const jobName = `campaign-step-${step.id}`
+    await getNotificationsQueue().add(jobName, {
       recipientId: step.studentCampaign.student?.userId ?? studentId,
       channel: template.channel as any,
       templateKey: template.templateKey,
@@ -183,7 +191,6 @@ async function executeStep(step: {
     await repo.updateStepStatus(step.id, {
       status: 'sent',
       sentAt: new Date(),
-      notificationLogId: undefined, // will be linked when notification worker processes
     })
   }
 
@@ -191,7 +198,6 @@ async function executeStep(step: {
 }
 
 async function findStepWithContext(stepId: string) {
-  const { PrismaClient } = await import('@prisma/client')
   const prisma = (await import('../../lib/prisma.js')).default
   return prisma.studentCampaignStep.findUnique({
     where: { id: stepId },

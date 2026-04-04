@@ -62,6 +62,14 @@ export function startNotificationsWorker() {
             data: { status: 'sent', sentAt: new Date() },
           })
 
+          // Link campaign step to notification log if this is a campaign send
+          if (data.campaignStepId) {
+            prisma.studentCampaignStep.update({
+              where: { id: data.campaignStepId as string },
+              data: { notificationLogId: notification.id },
+            }).catch(() => {}) // non-fatal if step doesn't exist
+          }
+
           return { status: 'sent' as const, notificationId: notification.id }
         } catch (err) {
           await prisma.notificationLog.update({

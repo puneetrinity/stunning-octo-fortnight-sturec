@@ -45,6 +45,7 @@ import {
   usePauseCampaign,
   useResumeCampaign,
   useUpdateCampaignMode,
+  useCampaignHistory,
 } from '@/features/campaigns/hooks/use-campaigns'
 
 export default function StudentDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -1452,6 +1453,7 @@ function MeetingOutcomesTab({ studentId }: { studentId: string }) {
 function CampaignsTab({ studentId }: { studentId: string }) {
   const { data: campaigns, isLoading } = useStudentCampaigns(studentId)
   const { data: packs } = useCampaignPacks()
+  const { data: history } = useCampaignHistory(studentId)
   const startCampaign = useStartCampaign()
   const sendStep = useSendStep()
   const sendAll = useSendAll()
@@ -1587,6 +1589,33 @@ function CampaignsTab({ studentId }: { studentId: string }) {
             </div>
           </Card>
         ))
+      )}
+
+      {/* Delivery history */}
+      {(history ?? []).length > 0 && (
+        <Card>
+          <CardHeader><CardTitle>Delivery History</CardTitle></CardHeader>
+          <div className="space-y-2">
+            {history!.map((h) => (
+              <div key={h.id} className="flex items-center justify-between rounded-lg bg-surface-sunken/50 p-3">
+                <div className="flex items-center gap-3">
+                  <Badge variant={h.channel === 'email' ? 'info' : h.channel === 'whatsapp' ? 'success' : 'muted'}>
+                    {h.channel}
+                  </Badge>
+                  <span className="text-sm text-text-primary">{h.templateKey.replace(/_/g, ' ')}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-text-muted">
+                    {new Date(h.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}
+                  </span>
+                  <Badge variant={h.status === 'sent' ? 'success' : h.status === 'failed' ? 'danger' : 'muted'} dot>
+                    {h.status}
+                  </Badge>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
       )}
     </div>
   )

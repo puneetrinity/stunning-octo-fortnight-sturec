@@ -80,7 +80,8 @@ export async function sendAll(
   request: FastifyRequest<{ Params: { id: string; campaignId: string } }>,
   reply: FastifyReply,
 ) {
-  const results = await campaignService.sendAllDue(request.params.campaignId)
+  const results = await campaignService.sendAllDue(request.params.campaignId, request.params.id)
+  if (!results) return reply.code(404).send({ error: 'Campaign not found', code: 'NOT_FOUND' })
   return reply.send(results)
 }
 
@@ -88,7 +89,8 @@ export async function pauseCampaign(
   request: FastifyRequest<{ Params: { id: string; campaignId: string } }>,
   reply: FastifyReply,
 ) {
-  const result = await campaignService.pauseCampaign(request.params.campaignId)
+  const result = await campaignService.pauseCampaign(request.params.campaignId, request.params.id)
+  if (!result) return reply.code(404).send({ error: 'Campaign not found', code: 'NOT_FOUND' })
   return reply.send(result)
 }
 
@@ -96,7 +98,8 @@ export async function resumeCampaign(
   request: FastifyRequest<{ Params: { id: string; campaignId: string } }>,
   reply: FastifyReply,
 ) {
-  const result = await campaignService.resumeCampaign(request.params.campaignId)
+  const result = await campaignService.resumeCampaign(request.params.campaignId, request.params.id)
+  if (!result) return reply.code(404).send({ error: 'Campaign not found', code: 'NOT_FOUND' })
   return reply.send(result)
 }
 
@@ -105,7 +108,8 @@ export async function updateMode(
   reply: FastifyReply,
 ) {
   const { mode } = request.body as { mode: string }
-  const result = await campaignService.updateCampaignMode(request.params.campaignId, mode)
+  const result = await campaignService.updateCampaignMode(request.params.campaignId, mode, request.params.id)
+  if (!result) return reply.code(404).send({ error: 'Campaign not found', code: 'NOT_FOUND' })
   return reply.send(result)
 }
 

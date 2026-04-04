@@ -215,8 +215,22 @@ export function findDueSteps() {
 
 export function findStudentCampaignHistory(studentId: string) {
   return prisma.notificationLog.findMany({
-    where: { studentId },
+    where: {
+      studentId,
+      payloadJson: { path: ['campaignStepId'], not: undefined },
+    },
     orderBy: { createdAt: 'desc' },
     take: 50,
+  })
+}
+
+/**
+ * Link a notification log entry back to its campaign step.
+ * Called by the notifications worker after successful delivery.
+ */
+export function linkStepToNotification(campaignStepId: string, notificationLogId: string) {
+  return prisma.studentCampaignStep.update({
+    where: { id: campaignStepId },
+    data: { notificationLogId },
   })
 }
