@@ -170,10 +170,11 @@ async function executeStep(step: {
       entityId: studentId,
       eventType: 'campaign_triggered',
       triggeringActionId: String(template.mauticCampaignId),
+      campaignStepId: step.id,
     }).catch((err) => console.error('[campaigns] Mautic trigger failed:', err))
 
-    // Mark as scheduled/queued — Mautic callback will confirm delivery
-    await repo.updateStepStatus(step.id, { status: 'sent', sentAt: new Date() })
+    // Mark as scheduled — worker will update to sent/failed after Mautic API call
+    await repo.updateStepStatus(step.id, { status: 'scheduled' })
   } else {
     // Direct delivery via notification worker
     await getNotificationsQueue().add(`campaign-step-${step.id}`, {
