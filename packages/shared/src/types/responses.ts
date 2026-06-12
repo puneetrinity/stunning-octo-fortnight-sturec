@@ -129,6 +129,8 @@ export interface StudentDetail {
   email: string
   source: string
   sourcePartner: string | null
+  /** The lead this student was converted from (origin story for attribution) */
+  origin?: { leadId: string; sourcePartner: string | null } | null
   stage: StudentStage
   stageUpdatedAt: string
   // Profile

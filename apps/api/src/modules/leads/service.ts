@@ -142,6 +142,7 @@ export async function convertLead(id: string, user: RequestUser) {
       status: 'converted',
       convertedStudentId: existingStudent.id,
     })
+    if (!lead.outcome) await recordOutcome(id, { outcome: 'applied', reason: 'converted to student' })
     return { action: 'linked' as const }
   }
 
@@ -193,6 +194,9 @@ export async function convertLead(id: string, user: RequestUser) {
 
     return created
   })
+
+  // Conversion implies the lead applied — keep the funnel self-maintaining
+  if (!lead.outcome) await recordOutcome(id, { outcome: 'applied', reason: 'converted to student' })
 
   // Sync conversion to Mautic
   getMauticSyncQueue().add('lead-converted', {

@@ -135,3 +135,23 @@ export async function getFunnel() {
   )
   return { sources, totals }
 }
+
+/**
+ * Lead↔student cohesion: student-stage progress writes back to the
+ * originating lead so the funnel's applied/enrolled counts maintain
+ * themselves (merge the decisions, not the screens).
+ *  - offer_confirmed  → outcome 'applied' (only if outcome still empty)
+ *  - arrived_france   → outcome 'enrolled' (the case-study hero metric)
+ */
+export async function syncLeadOutcomeFromStage(studentId: string, toStage: string) {
+  if (toStage !== 'offer_confirmed' && toStage !== 'arrived_france') return
+  const lead = await repo.findLeadByConvertedStudent(studentId)
+  if (!lead) return
+  if (toStage === 'arrived_france') {
+    if (lead.outcome !== 'enrolled') {
+      await repo.updateOutcome(lead.id, 'enrolled', 'student arrived in France (auto from stage)')
+    }
+  } else if (lead.outcome == null) {
+    await repo.updateOutcome(lead.id, 'applied', 'offer confirmed (auto from stage)')
+  }
+}

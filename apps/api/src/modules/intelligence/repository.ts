@@ -105,6 +105,7 @@ export async function workQueue(opts: { limit: number; offset: number; intakeMax
       where: {
         deletedAt: null,
         outcome: null,
+        status: { notIn: ['converted', 'disqualified'] },
         dqTags: { isEmpty: true },
         OR: [{ intakeYear: null }, { intakeYear: { lte: opts.intakeMax } }],
         ...scope,
@@ -134,6 +135,7 @@ export async function workQueue(opts: { limit: number; offset: number; intakeMax
       where: {
         deletedAt: null,
         outcome: null,
+        status: { notIn: ['converted', 'disqualified'] },
         dqTags: { isEmpty: true },
         OR: [{ intakeYear: null }, { intakeYear: { lte: opts.intakeMax } }],
         ...scope,
@@ -227,6 +229,14 @@ export async function getLeadEvents(leadId: string, limit = 50) {
     where: { leadId },
     orderBy: { occurredAt: 'desc' },
     take: limit,
+  })
+}
+
+/** The lead that converted into this student (for stage→outcome writeback + origin display). */
+export async function findLeadByConvertedStudent(studentId: string) {
+  return prisma.lead.findFirst({
+    where: { convertedStudentId: studentId, deletedAt: null },
+    select: { id: true, outcome: true, sourcePartner: true },
   })
 }
 

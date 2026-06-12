@@ -16,6 +16,8 @@ import type {
 import type { RequestUser } from '../../middleware/auth.js'
 
 import * as repo from './repository.js'
+import { syncLeadOutcomeFromStage } from '../intelligence/service.js'
+import { findLeadByConvertedStudent } from '../intelligence/repository.js'
 import { toPrismaArgs, paginate } from '../../lib/pagination.js'
 import { getNotificationsQueue, getMauticSyncQueue } from '../../lib/queue/index.js'
 import { frontendUrl } from '../../lib/frontend-url.js'
@@ -60,7 +62,11 @@ export async function getStudent(id: string, user?: RequestUser): Promise<Studen
   const student = await repo.findStudentById(id)
   if (!student) return null
   if (user && !canAccessStudentRecord(student, user)) return null
-  return mapStudentToDetail(student)
+  const detail = mapStudentToDetail(student)
+  // Origin story: link back to the converted lead (source + intent timeline)
+  const originLead = await findLeadByConvertedStudent(id)
+  detail.origin = originLead ? { leadId: originLead.id, sourcePartner: originLead.sourcePartner } : null
+  return detail
 }
 
 function canAccessStudentRecord(
@@ -124,6 +130,10 @@ export async function changeStage(
 
   // Emit async side effects
   const transitionId = transition.id
+
+  // Lead↔student cohesion: progress writes back to the originating lead
+  syncLeadOutcomeFromStage(id, toStage).catch((err) =>
+    console.error('[students] Failed to sync lead outcome from stage:', err))
 
   // Notify the student about stage change
   getNotificationsQueue().add('stage-change', {

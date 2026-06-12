@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import type { StudentDetail } from '@sturec/shared'
 import { STAGE_DISPLAY_NAMES, STAGE_ORDER } from '@sturec/shared'
 
@@ -92,6 +93,20 @@ export function IdentityRail({ student, studentId }: IdentityRailProps) {
       {/* Owner + heat */}
       <div className="space-y-3">
         <RailRow label="Owner" value={student.counsellorName} />
+        {(student.origin || student.sourcePartner) && (
+          <div className="flex items-start justify-between gap-2">
+            <span className="text-[11px] font-medium uppercase tracking-wide text-text-muted">Origin</span>
+            <span className="max-w-[170px] truncate text-right text-xs text-text-secondary" title={student.origin?.sourcePartner ?? student.sourcePartner ?? undefined}>
+              {student.origin?.leadId ? (
+                <Link href={`/leads/${student.origin.leadId}`} className="text-primary-600 hover:underline">
+                  {student.origin.sourcePartner ?? student.sourcePartner ?? 'View lead'}
+                </Link>
+              ) : (
+                student.sourcePartner
+              )}
+            </span>
+          </div>
+        )}
         <RailRow
           label="Lead heat"
           value={
